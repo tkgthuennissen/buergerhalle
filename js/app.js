@@ -47,7 +47,8 @@ class App {
   static getCurrentPage() {
     const path = window.location.pathname;
     const filename = path.split('/').pop() || 'index.html';
-    return filename.replace('.html', '');
+    // Entferne Query-Parameter und .html Extension
+    return filename.split('?')[0].replace('.html', '');
   }
 
   /**
