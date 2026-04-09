@@ -103,7 +103,7 @@ class CalendarController {
    */
   static selectDate(dateString) {
     // Navigiert zur Buchungsmaske mit vorgefülltem Datum
-    window.location.href = `booking-form.html?eventDate=${dateString}`;
+    window.location.href = `/buergerhalle/pages/booking-form.html?eventDate=${dateString}`;
   }
 
   /**

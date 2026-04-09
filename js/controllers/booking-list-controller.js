@@ -24,7 +24,7 @@ class BookingListController {
           <div class="empty-state-icon">📭</div>
           <h3>Keine Buchungen</h3>
           <p>Erstellen Sie eine neue Buchung oder nutzen Sie den Buchungskalender.</p>
-          <a href="booking-form.html" class="btn btn-primary">➕ Erste Buchung erstellen</a>
+          <a href="/buergerhalle/pages/booking-form.html" class="btn btn-primary">➕ Erste Buchung erstellen</a>
         </div>
       `;
       return;
@@ -73,7 +73,7 @@ class BookingListController {
                 </td>
                 <td>
                   <div class="table-row-actions">
-                    <button class="icon-btn" onclick="window.location.href='booking-form.html?id=${booking.id}'" title="Bearbeiten">✏️</button>
+                    <button class="icon-btn" onclick="window.location.href='/buergerhalle/pages/booking-form.html?id=${booking.id}'" title="Bearbeiten">✏️</button>
                     <button class="icon-btn danger" onclick="BookingListController.deleteBooking('${booking.id}')" title="Löschen">🗑️</button>
                   </div>
                 </td>

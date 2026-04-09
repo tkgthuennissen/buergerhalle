@@ -277,7 +277,7 @@ class BookingFormController {
       );
 
       setTimeout(() => {
-        window.location.href = 'bookings.html';
+        window.location.href = '/buergerhalle/pages/bookings.html';
       }, 1500);
     } catch (error) {
       App.showNotification('Fehler: ' + error.message, 'error');
