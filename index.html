@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bürgerhalle-Verwaltung</title>
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+  <!-- ========== HEADER ========== -->
+  <header class="app-header">
+    <h1>🏛️ Bürgerhalle-Verwaltung</h1>
+    <div class="app-header-actions">
+      <button onclick="App.exportData()" title="Daten exportieren">💾 Export</button>
+      <button onclick="App.importData()" title="Daten importieren">📂 Import</button>
+      <button onclick="storage.reset()" title="Zurücksetzen">🔄 Reset</button>
+    </div>
+  </header>
+
+  <!-- ========== MAIN CONTAINER ========== -->
+  <div class="app-container">
+    <!-- SIDEBAR -->
+    <aside class="app-sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Stammdaten</div>
+        <ul class="sidebar-menu">
+          <li><a href="pages/addresses.html" data-nav-link="addresses">📍 Adressen</a></li>
+          <li><a href="pages/articles.html" data-nav-link="articles">📦 Artikel</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Buchungen</div>
+        <ul class="sidebar-menu">
+          <li><a href="pages/calendar.html" data-nav-link="calendar">📅 Buchungskalender</a></li>
+          <li><a href="pages/bookings.html" data-nav-link="bookings">📋 Übersicht</a></li>
+          <li><a href="pages/booking-form.html" data-nav-link="booking-form">➕ Neue Buchung</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Dokumente</div>
+        <ul class="sidebar-menu">
+          <li><a href="pages/documents.html" data-nav-link="documents">📄 Verträge &amp; Rechnungen</a></li>
+          <li><a href="pages/invoices.html" data-nav-link="invoices">💰 Manuelle Rechnungen</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Finanzierung</div>
+        <ul class="sidebar-menu">
+          <li><a href="pages/cashbook.html" data-nav-link="cashbook">💳 Kassenbuch</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="app-content">
+      <div class="content-header">
+        <h1>Willkommen zur Bürgerhalle-Verwaltung</h1>
+      </div>
+      
+      <div class="content-body">
+        <div class="page-section">
+          <h2>👋 Überblick</h2>
+          <p>
+            Diese Anwendung verwaltet alle Aspekte der Veranstaltungshalle-Vermietung:
+          </p>
+          <ul>
+            <li><strong>Adressen:</strong> Kunden, Vereine, Unternehmen</li>
+            <li><strong>Artikel:</strong> Pakete und Zusatzleistungen</li>
+            <li><strong>Buchungen:</strong> Mit automatischer Überschneidungsprüfung</li>
+            <li><strong>Kalender:</strong> Visuelle Übersicht aller Buchungen</li>
+            <li><strong>Dokumente:</strong> Verträge und Rechnungen</li>
+            <li><strong>Kassenbuch:</strong> Finanzielle Übersicht</li>
+          </ul>
+        </div>
+
+        <div class="page-section">
+          <h2>🚀 Schnelleinstieg</h2>
+          <ol>
+            <li>Gehen Sie zu <strong>Stammdaten → Adressen</strong> und erstellen Sie zunächst eine Adresse.</li>
+            <li>Überprüfen Sie die Standardartikel unter <strong>Stammdaten → Artikel</strong>.</li>
+            <li>Klicken Sie auf <strong>Buchungen → Neue Buchung</strong> oder nutzen Sie den <strong>Buchungskalender</strong>.</li>
+            <li>Generieren Sie Verträge und Rechnungen aus Buchungen.</li>
+            <li>Verwalten Sie Einnahmen im <strong>Kassenbuch</strong>.</li>
+          </ol>
+        </div>
+
+        <div class="page-section">
+          <h2>💾 Datenverwaltung</h2>
+          <p>
+            Alle Daten werden sicher in Ihrem Browser gespeichert (localStorage). 
+            Sie können jederzeit ein Backup exportieren oder importieren:
+          </p>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="App.exportData()">📥 Daten exportieren</button>
+            <button class="btn btn-secondary" onclick="App.importData()">📤 Daten importieren</button>
+          </div>
+        </div>
+
+        <div class="page-section">
+          <h2>📊 Aktuelle Statistiken</h2>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-lg);">
+            <div class="card">
+              <div class="text-center">
+                <h4 id="stat-addresses">—</h4>
+                <p class="text-muted">Adressen</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="text-center">
+                <h4 id="stat-bookings">—</h4>
+                <p class="text-muted">Buchungen</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="text-center">
+                <h4 id="stat-documents">—</h4>
+                <p class="text-muted">Dokumente</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="js/storage.js"></script>
+  <script src="js/services/numbering.js"></script>
+  <script src="js/services/address.js"></script>
+  <script src="js/services/article.js"></script>
+  <script src="js/services/booking.js"></script>
+  <script src="js/services/document.js"></script>
+  <script src="js/services/cashbook.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    // Statistiken auf Startseite
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('stat-addresses').textContent = storage.getAddresses().length;
+      document.getElementById('stat-bookings').textContent = storage.getBookings().length;
+      document.getElementById('stat-documents').textContent = storage.getDocuments().length;
+    });
+  </script>
+</body>
+</html>

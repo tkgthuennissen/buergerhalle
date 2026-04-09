@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manuelle Rechnungen - Bürgerhalle-Verwaltung</title>
+  
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>🏛️ Bürgerhalle-Verwaltung</h1>
+  </header>
+
+  <div class="app-container">
+    <aside class="app-sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Stammdaten</div>
+        <ul class="sidebar-menu">
+          <li><a href="addresses.html" data-nav-link="addresses">📍 Adressen</a></li>
+          <li><a href="articles.html" data-nav-link="articles">📦 Artikel</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Buchungen</div>
+        <ul class="sidebar-menu">
+          <li><a href="calendar.html" data-nav-link="calendar">📅 Buchungskalender</a></li>
+          <li><a href="bookings.html" data-nav-link="bookings">📋 Übersicht</a></li>
+          <li><a href="booking-form.html" data-nav-link="booking-form">➕ Neue Buchung</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Dokumente</div>
+        <ul class="sidebar-menu">
+          <li><a href="documents.html" data-nav-link="documents">📄 Verträge &amp; Rechnungen</a></li>
+          <li><a href="invoices.html" data-nav-link="invoices">💰 Manuelle Rechnungen</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Finanzierung</div>
+        <ul class="sidebar-menu">
+          <li><a href="cashbook.html" data-nav-link="cashbook">💳 Kassenbuch</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <main class="app-content">
+      <div class="content-header flex-between">
+        <h1>💰 Manuelle Rechnungen</h1>
+        <button class="btn btn-primary" id="btn-new-invoice">➕ Neue Rechnung</button>
+      </div>
+      
+      <div class="content-body">
+        <div class="page-section">
+          <div id="invoices-list"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/services/numbering.js"></script>
+  <script src="../js/services/address.js"></script>
+  <script src="../js/services/article.js"></script>
+  <script src="../js/services/booking.js"></script>
+  <script src="../js/services/document.js"></script>
+  <script src="../js/services/cashbook.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/controllers/invoice-controller.js"></script>
+</body>
+</html>

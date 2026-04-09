@@ -1,0 +1,372 @@
+/* ============================================================================
+   components.css - Komponenten-Spezifisches CSS
+   ============================================================================ */
+
+/* ============================================================================
+   Kalender
+   ============================================================================ */
+
+.calendar {
+  background: white;
+  border-radius: 6px;
+  padding: var(--spacing-lg);
+  border: 1px solid var(--border-gray);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.calendar-nav {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: var(--border-gray);
+  border: 1px solid var(--border-gray);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.calendar-cell {
+  background: white;
+  padding: var(--spacing-md);
+  min-height: 80px;
+  cursor: pointer;
+  transition: background 0.2s;
+  position: relative;
+}
+
+.calendar-cell:hover {
+  background: #f0f9ff;
+}
+
+.calendar-cell-empty {
+  background: var(--light-gray);
+  cursor: default;
+}
+
+.calendar-cell-empty:hover {
+  background: var(--light-gray);
+}
+
+.calendar-day {
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+  color: var(--dark-gray);
+}
+
+.calendar-weekday {
+  text-align: center;
+  font-weight: 600;
+  padding: var(--spacing-md);
+  background: var(--light-gray);
+  color: var(--secondary-color);
+  font-size: 12px;
+}
+
+.calendar-events {
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.calendar-event {
+  background: #dbeafe;
+  color: var(--primary-color);
+  padding: 2px 4px;
+  border-radius: 2px;
+  margin: 2px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============================================================================
+   Liste mit Aktionen
+   ============================================================================ */
+
+.data-table {
+  width: 100%;
+}
+
+.table-row-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: flex-end;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--secondary-color);
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.icon-btn:hover {
+  background: var(--light-gray);
+  color: var(--dark-gray);
+}
+
+.icon-btn.danger {
+  color: var(--danger-color);
+}
+
+.icon-btn.danger:hover {
+  background: #fee2e2;
+}
+
+/* ============================================================================
+   Buchungskalender - Event-Überlagerung
+   ============================================================================ */
+
+.booking-event-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid var(--primary-color);
+  border-radius: 4px;
+  padding: var(--spacing-md);
+  z-index: 10;
+  min-width: 250px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================================================
+   Formular-Spezifisches
+   ============================================================================ */
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+}
+
+.form-row-full {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================================
+   Artikel-Tabelle (mit Hinzufügen)
+   ============================================================================ */
+
+.items-table {
+  width: 100%;
+  margin-bottom: var(--spacing-lg);
+}
+
+.items-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.items-table .qty-input {
+  width: 60px;
+}
+
+.items-table .price-display {
+  text-align: right;
+  font-weight: 600;
+  color: var(--dark-gray);
+}
+
+.add-item-row {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.add-item-row select {
+  flex: 1;
+}
+
+.add-item-row input {
+  width: 80px;
+}
+
+/* ============================================================================
+   Dokumenten-Vorschau
+   ============================================================================ */
+
+.document-preview {
+  background: white;
+  border: 1px solid var(--border-gray);
+  padding: var(--spacing-xl);
+  border-radius: 6px;
+  font-family: var(--font-family);
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.8;
+}
+
+.document-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  border-bottom: 2px solid var(--border-gray);
+  padding-bottom: var(--spacing-lg);
+}
+
+.document-number {
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.document-section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.document-section-title {
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+  color: var(--dark-gray);
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+.document-address {
+  white-space: pre-wrap;
+  font-family: var(--font-family);
+}
+
+.document-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--spacing-lg) 0;
+}
+
+.document-table th {
+  background: var(--light-gray);
+  padding: var(--spacing-md);
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border-gray);
+}
+
+.document-table td {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border-gray);
+}
+
+.document-table .amount-col {
+  text-align: right;
+  font-family: var(--font-mono);
+}
+
+.document-totals {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--spacing-lg);
+}
+
+.totals-box {
+  width: 300px;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid var(--border-gray);
+}
+
+.total-row.final {
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-bottom: 2px solid var(--dark-gray);
+}
+
+/* ============================================================================
+   Status-Badges
+   ============================================================================ */
+
+.status {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-planned { background: #dbeafe; color: var(--primary-color); }
+.status-confirmed { background: #d1fae5; color: var(--success-color); }
+.status-cancelled { background: #fee2e2; color: var(--danger-color); }
+.status-created { background: #fef3c7; color: var(--warning-color); }
+.status-sent { background: #dbeafe; color: var(--info-color); }
+.status-paid { background: #d1fae5; color: var(--success-color); }
+
+/* ============================================================================
+   Kassenbuch
+   ============================================================================ */
+
+.cashbook-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.summary-card {
+  background: white;
+  padding: var(--spacing-lg);
+  border-radius: 6px;
+  border-left: 4px solid var(--border-gray);
+}
+
+.summary-card.income {
+  border-left-color: var(--success-color);
+}
+
+.summary-card.expense {
+  border-left-color: var(--danger-color);
+}
+
+.summary-card.balance {
+  border-left-color: var(--primary-color);
+}
+
+.summary-label {
+  font-size: 12px;
+  color: var(--secondary-color);
+  text-transform: uppercase;
+  margin-bottom: var(--spacing-sm);
+}
+
+.summary-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--dark-gray);
+  font-family: var(--font-mono);
+}
+
+.cashbook-table tr.income {
+  border-left: 3px solid var(--success-color);
+}
+
+.cashbook-table tr.expense {
+  border-left: 3px solid var(--danger-color);
+}
+
+@media (max-width: 768px) {
+  .cashbook-summary {
+    grid-template-columns: 1fr;
+  }
+}
