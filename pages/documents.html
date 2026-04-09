@@ -4,16 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Verträge & Rechnungen - Bürgerhalle-Verwaltung</title>
-  <base href="/buergerhalle/">
   
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
 </head>
 <body>
   <!-- HEADER -->
   <header class="app-header">
-    <a href="index.html" style="text-decoration:none;color:inherit;"><h1>🏛️ Bürgerhalle-Verwaltung</h1></a>
+    <a href="../index.html" style="text-decoration:none;color:inherit;"><h1>🏛️ Bürgerhalle-Verwaltung</h1></a>
     <div class="app-header-actions">
       <button onclick="App.exportData()" title="Daten exportieren">💾 Export</button>
       <button onclick="App.importData()" title="Daten importieren">📂 Import</button>
@@ -28,32 +27,32 @@
       <div class="sidebar-section">
         <div class="sidebar-section-title">Stammdaten</div>
         <ul class="sidebar-menu">
-          <li><a href="pages/addresses.html" data-nav-link="addresses">📍 Adressen</a></li>
-          <li><a href="pages/articles.html" data-nav-link="articles">📦 Artikel</a></li>
+          <li><a href="addresses.html" data-nav-link="addresses">📍 Adressen</a></li>
+          <li><a href="articles.html" data-nav-link="articles">📦 Artikel</a></li>
         </ul>
       </div>
 
       <div class="sidebar-section">
         <div class="sidebar-section-title">Buchungen</div>
         <ul class="sidebar-menu">
-          <li><a href="pages/calendar.html" data-nav-link="calendar">📅 Buchungskalender</a></li>
-          <li><a href="pages/bookings.html" data-nav-link="bookings">📋 Übersicht</a></li>
-          <li><a href="pages/booking-form.html" data-nav-link="booking-form">➕ Neue Buchung</a></li>
+          <li><a href="calendar.html" data-nav-link="calendar">📅 Buchungskalender</a></li>
+          <li><a href="bookings.html" data-nav-link="bookings">📋 Übersicht</a></li>
+          <li><a href="booking-form.html" data-nav-link="booking-form">➕ Neue Buchung</a></li>
         </ul>
       </div>
 
       <div class="sidebar-section">
         <div class="sidebar-section-title">Dokumente</div>
         <ul class="sidebar-menu">
-          <li><a href="pages/documents.html" data-nav-link="documents">📄 Verträge &amp; Rechnungen</a></li>
-          <li><a href="pages/invoices.html" data-nav-link="invoices">💰 Manuelle Rechnungen</a></li>
+          <li><a href="documents.html" data-nav-link="documents">📄 Verträge &amp; Rechnungen</a></li>
+          <li><a href="invoices.html" data-nav-link="invoices">💰 Manuelle Rechnungen</a></li>
         </ul>
       </div>
 
       <div class="sidebar-section">
         <div class="sidebar-section-title">Finanzierung</div>
         <ul class="sidebar-menu">
-          <li><a href="pages/cashbook.html" data-nav-link="cashbook">💳 Kassenbuch</a></li>
+          <li><a href="cashbook.html" data-nav-link="cashbook">💳 Kassenbuch</a></li>
         </ul>
       </div>
     </aside>
@@ -79,14 +78,14 @@
   </div>
 
   <!-- SCRIPTS -->
-  <script src="js/storage.js"></script>
-  <script src="js/services/numbering.js"></script>
-  <script src="js/services/address.js"></script>
-  <script src="js/services/article.js"></script>
-  <script src="js/services/booking.js"></script>
-  <script src="js/services/document.js"></script>
-  <script src="js/services/cashbook.js"></script>
-  <script src="js/app.js"></script>
-  <script src="js/controllers/document-controller.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/services/numbering.js"></script>
+  <script src="../js/services/address.js"></script>
+  <script src="../js/services/article.js"></script>
+  <script src="../js/services/booking.js"></script>
+  <script src="../js/services/document.js"></script>
+  <script src="../js/services/cashbook.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/controllers/document-controller.js"></script>
 </body>
 </html>
