@@ -55,8 +55,8 @@ class CalendarController {
     const daysInMonth = lastDay.getDate();
     const startingDayOfWeek = firstDay.getDay();
 
-    // Buchungen für den Monat laden
-    const bookings = BookingService.getByMonth(this.currentMonth, this.currentYear);
+    // Alle Buchungen laden
+    const allBookings = BookingService.getActive();
 
     let html = '<div class="calendar-grid">';
 
@@ -74,13 +74,21 @@ class CalendarController {
     // Tage des Monats
     for (let day = 1; day <= daysInMonth; day++) {
       const dateString = `${this.currentYear}-${String(this.currentMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      const dayBookings = bookings.filter(b => {
-        const eventDate = b.eventDate;
-        return eventDate === dateString;
+      const currentDate = new Date(dateString + 'T00:00:00');
+
+      // Finde alle Buchungen die diesen Tag betreffen (beginDateTime <= Tag <= endDateTime)
+      const dayBookings = allBookings.filter(b => {
+        const beginDate = new Date(b.beginDateTime).setHours(0, 0, 0, 0);
+        const endDate = new Date(b.endDateTime).setHours(23, 59, 59, 999);
+        const checkDate = currentDate.getTime();
+        return checkDate >= beginDate && checkDate <= endDate;
       });
 
+      // CSS-Klasse für blockierte Tage
+      const isBlocked = dayBookings.length > 0 ? 'calendar-cell-blocked' : '';
+
       html += `
-        <div class="calendar-cell" onclick="CalendarController.selectDate('${dateString}')">
+        <div class="calendar-cell ${isBlocked}" onclick="${dayBookings.length === 0 ? `CalendarController.selectDate('${dateString}')` : ''}">
           <div class="calendar-day">${day}</div>
           <div class="calendar-events">
             ${dayBookings.slice(0, 2).map(b => {

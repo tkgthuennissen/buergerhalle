@@ -57,6 +57,20 @@
   background: var(--light-gray);
 }
 
+.calendar-cell-blocked {
+  background: #ffe8e8;
+  border: 2px solid #ff6b6b;
+  cursor: not-allowed;
+}
+
+.calendar-cell-blocked:hover {
+  background: #ffd1d1;
+}
+
+.calendar-cell-blocked .calendar-events {
+  opacity: 0.8;
+}
+
 .calendar-day {
   font-weight: 600;
   margin-bottom: var(--spacing-sm);
