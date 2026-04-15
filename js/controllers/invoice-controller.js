@@ -113,9 +113,10 @@ class InvoiceController {
     `;
 
     this.invoiceItems = [];
+    const self = this;
     App.openModal(title, content, [
       { label: 'Abbrechen', class: 'btn-secondary', callback: () => App.closeModal() },
-      { label: 'Rechnung erstellen', class: 'btn-primary', callback: () => this.saveManualInvoice() }
+      { label: 'Rechnung erstellen', class: 'btn-primary', callback: () => self.saveManualInvoice() }
     ]);
     this.populateInvoiceAddresses();
   }
@@ -211,13 +212,14 @@ class InvoiceController {
   }
 
   static saveManualInvoice() {
-    const form = document.getElementById('manual-invoice-form');
-    if (!form) return;
+    console.log('saveManualInvoice aufgerufen, invoiceItems:', this.invoiceItems);
+    
+    const addressId = document.getElementById('invoice-address')?.value;
+    const documentDate = document.getElementById('invoice-date')?.value;
+    const paymentMethod = document.getElementById('invoice-payment-method')?.value;
+    const notes = document.getElementById('invoice-notes')?.value?.trim() || '';
 
-    const addressId = document.getElementById('invoice-address').value;
-    const documentDate = document.getElementById('invoice-date').value;
-    const paymentMethod = document.getElementById('invoice-payment-method').value;
-    const notes = document.getElementById('invoice-notes').value.trim();
+    console.log('Formular-Daten:', { addressId, documentDate, paymentMethod, itemsCount: this.invoiceItems.length });
 
     if (!addressId || !documentDate || !paymentMethod || this.invoiceItems.length === 0) {
       App.showNotification('Alle erforderlichen Felder ausfüllen und mindestens einen Artikel hinzufügen', 'error');
@@ -230,9 +232,11 @@ class InvoiceController {
       DocumentService.save(invoice);
 
       App.closeModal();
+      this.invoiceItems = [];
       this.render();
       App.showNotification('Rechnung erstellt', 'success');
     } catch (error) {
+      console.error('Fehler bei Rechnungserstellung:', error);
       App.showNotification('Fehler: ' + error.message, 'error');
     }
   }

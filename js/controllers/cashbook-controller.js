@@ -129,9 +129,10 @@ class CashbookController {
       </form>
     `;
 
+    const self = this;
     App.openModal(title, content, [
       { label: 'Abbrechen', class: 'btn-secondary', callback: () => App.closeModal() },
-      { label: 'Eintrag speichern', class: 'btn-primary', callback: () => this.saveManualEntry() }
+      { label: 'Eintrag speichern', class: 'btn-primary', callback: () => self.saveManualEntry() }
     ]);
   }
 
