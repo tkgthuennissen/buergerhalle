@@ -53,7 +53,7 @@ class CalendarController {
     const firstDay = new Date(this.currentYear, this.currentMonth - 1, 1);
     const lastDay = new Date(this.currentYear, this.currentMonth, 0);
     const daysInMonth = lastDay.getDate();
-    const startingDayOfWeek = firstDay.getDay();
+    const firstWeekdayIndex = (firstDay.getDay() + 6) % 7; // Montag als erster Tag
 
     // Alle Buchungen laden
     const allBookings = BookingService.getActive();
@@ -61,13 +61,13 @@ class CalendarController {
     let html = '<div class="calendar-grid">';
 
     // Wochentag-Header
-    const weekdays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+    const weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
     for (const day of weekdays) {
       html += `<div class="calendar-weekday">${day}</div>`;
     }
 
     // Leere Zellen am Anfang
-    for (let i = 0; i < startingDayOfWeek; i++) {
+    for (let i = 0; i < firstWeekdayIndex; i++) {
       html += '<div class="calendar-cell calendar-cell-empty"></div>';
     }
 

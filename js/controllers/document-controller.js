@@ -108,9 +108,142 @@ class DocumentController {
   }
 
   static viewDocument(docId) {
-    // TODO: Implementieren Sie einen Document Viewer modal
     const doc = DocumentService.getById(docId);
-    alert(`Dokument: ${doc.documentNumber}\n\nViewe-Funktion nicht implementiert.`);
+    if (!doc) {
+      App.showNotification('Dokument nicht gefunden', 'error');
+      return;
+    }
+
+    const addr = AddressService.getById(doc.addressId);
+    const isInvoice = doc.type === 'invoice';
+    const title = isInvoice ? `Rechnung ${doc.documentNumber}` : `Vertrag ${doc.documentNumber}`;
+
+    const itemsHtml = doc.items.map(item => `
+      <tr>
+        <td>${item.description}</td>
+        <td class="text-center">${item.quantity}</td>
+        <td class="text-right">${App.formatCurrency(item.unitPrice)}</td>
+        <td class="text-right">${App.formatCurrency(item.total)}</td>
+      </tr>
+    `).join('');
+
+    const paymentInfo = isInvoice ? `
+      <div class="row">
+        <div class="col-6">
+          <strong>Zahlungsmethode:</strong><br>
+          ${doc.paymentMethod === 'cash' ? '💵 Barzahlung' : '🏦 Banküberweisung'}
+        </div>
+        <div class="col-6">
+          <strong>Status:</strong><br>
+          <span class="badge badge-${doc.status}">${doc.status}</span>
+        </div>
+      </div>
+    ` : `
+      <div class="row">
+        <div class="col-12">
+          <strong>Status:</strong><br>
+          <span class="badge badge-${doc.status}">${doc.status}</span>
+        </div>
+      </div>
+    `;
+
+    const eventDateInfo = doc.eventDate ? `
+      <div class="row">
+        <div class="col-12">
+          <strong>Veranstaltungsdatum:</strong> ${App.formatDate(doc.eventDate)}
+        </div>
+      </div>
+    ` : '';
+
+    const notesInfo = doc.notes ? `
+      <div class="row">
+        <div class="col-12">
+          <strong>Notizen:</strong><br>
+          <p class="text-muted">${doc.notes}</p>
+        </div>
+      </div>
+    ` : '';
+
+    const modalContent = `
+      <div class="document-view">
+        <div class="document-header">
+          <h2>${title}</h2>
+          <div class="document-meta">
+            <div class="row">
+              <div class="col-6">
+                <strong>Datum:</strong> ${App.formatDate(doc.documentDate)}
+              </div>
+              <div class="col-6">
+                <strong>Kunde:</strong> ${addr?.name || '—'}
+              </div>
+            </div>
+            ${addr?.address ? `
+              <div class="row">
+                <div class="col-12">
+                  <strong>Adresse:</strong><br>
+                  ${addr.address}<br>
+                  ${addr.zip} ${addr.city}
+                </div>
+              </div>
+            ` : ''}
+            ${eventDateInfo}
+          </div>
+        </div>
+
+        <div class="document-items">
+          <h3>Positionen</h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Beschreibung</th>
+                <th class="text-center">Menge</th>
+                <th class="text-right">Einzelpreis</th>
+                <th class="text-right">Gesamt</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsHtml}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="document-summary">
+          <div class="row">
+            <div class="col-6">
+              <strong>Zwischensumme:</strong>
+            </div>
+            <div class="col-6 text-right">
+              ${App.formatCurrency(doc.subtotal)}
+            </div>
+          </div>
+          ${doc.tax > 0 ? `
+            <div class="row">
+              <div class="col-6">
+                <strong>MwSt.:</strong>
+              </div>
+              <div class="col-6 text-right">
+                ${App.formatCurrency(doc.tax)}
+              </div>
+            </div>
+          ` : ''}
+          <div class="row">
+            <div class="col-6">
+              <strong>Gesamt:</strong>
+            </div>
+            <div class="col-6 text-right">
+              <strong>${App.formatCurrency(doc.total)}</strong>
+            </div>
+          </div>
+        </div>
+
+        ${paymentInfo}
+        ${notesInfo}
+      </div>
+    `;
+
+    App.openModal(title, modalContent, [
+      { label: 'Schließen', class: 'btn-secondary', callback: () => App.closeModal() }
+    ]);
   }
 
   static deleteDocument(docId) {

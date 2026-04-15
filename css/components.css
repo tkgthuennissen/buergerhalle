@@ -230,6 +230,31 @@
   line-height: 1.8;
 }
 
+..document-view {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.document-view .row {
+  display: flex;
+  gap: var(--spacing-lg);
+  flex-wrap: wrap;
+  margin-bottom: var(--spacing-md);
+}
+
+.document-view .col-6 {
+  flex: 1 1 calc(50% - var(--spacing-lg) / 2);
+  min-width: 220px;
+}
+
+.document-view .col-12 {
+  flex: 1 1 100%;
+}
+
 .document-header {
   text-align: center;
   margin-bottom: var(--spacing-xl);

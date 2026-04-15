@@ -16,6 +16,9 @@ class App {
     // Navigation initialisieren
     this.setupNavigation();
     
+    // Mobile Navigation vorbereiten
+    this.setupMobileMenu();
+
     // Globale Event Listener
     this.setupGlobalEvents();
   }
@@ -244,6 +247,55 @@ class App {
     a.download = `buergerhalle_backup_${new Date().toISOString().split('T')[0]}.json`;
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  /**
+   * Richtet die mobile Sidebar-Navigation ein
+   */
+  static setupMobileMenu() {
+    const header = document.querySelector('.app-header');
+    if (!header) return;
+
+    if (!document.querySelector('.sidebar-toggle')) {
+      const toggle = document.createElement('button');
+      toggle.className = 'sidebar-toggle';
+      toggle.type = 'button';
+      toggle.title = 'Menü öffnen';
+      toggle.innerHTML = '☰';
+      toggle.addEventListener('click', (event) => {
+        event.stopPropagation();
+        this.toggleSidebar();
+      });
+      header.insertBefore(toggle, header.firstChild);
+    }
+
+    document.addEventListener('click', (event) => {
+      if (!document.body.classList.contains('sidebar-open')) return;
+      const sidebar = document.querySelector('.app-sidebar');
+      const headerElement = document.querySelector('.app-header');
+      if (!sidebar || sidebar.contains(event.target) || (headerElement && headerElement.contains(event.target))) {
+        return;
+      }
+      this.closeSidebar();
+    });
+
+    document.querySelectorAll('[data-nav-link]').forEach(link => {
+      link.addEventListener('click', () => this.closeSidebar());
+    });
+  }
+
+  /**
+   * Öffnet oder schließt die mobile Sidebar
+   */
+  static toggleSidebar() {
+    document.body.classList.toggle('sidebar-open');
+  }
+
+  /**
+   * Schließt die mobile Sidebar
+   */
+  static closeSidebar() {
+    document.body.classList.remove('sidebar-open');
   }
 
   /**
