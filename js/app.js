@@ -180,29 +180,23 @@ class App {
         ${content}
       </div>
       <div class="modal-footer">
-        ${buttons.map(btn => 
-          `<button class="btn ${btn.class || 'btn-default'}" data-action="${btn.action || ''}">${btn.label}</button>`
+        ${buttons.map((btn, index) => 
+          `<button class="btn ${btn.class || 'btn-default'}" onclick="App.handleModalButton(${index})">${btn.label}</button>`
         ).join('')}
       </div>
     `;
+    
+    // Store buttons for onclick handler
+    modal._buttons = buttons;
+    
+    // Store buttons for onclick handler
+    modal._buttons = buttons;
     
     document.body.appendChild(modal);
     
     // Close Button
     box.querySelector('.modal-close').addEventListener('click', () => {
       modal.remove();
-    });
-
-    // Action Buttons
-    box.querySelectorAll('[data-action]').forEach(btn => {
-      const action = btn.getAttribute('data-action');
-      const buttonConfig = buttons.find(b => b.action === action);
-      if (buttonConfig?.callback) {
-        btn.addEventListener('click', () => {
-          buttonConfig.callback();
-          modal.remove();
-        });
-      }
     });
 
     // Close on Overlay Click
@@ -213,6 +207,19 @@ class App {
     });
 
     modal.appendChild(box);
+  }
+
+  /**
+   * Behandelt Modal-Button-Klicks
+   */
+  static handleModalButton(index) {
+    const modal = document.querySelector('.modal-overlay');
+    if (!modal || !modal._buttons) return;
+    
+    const button = modal._buttons[index];
+    if (button?.callback) {
+      button.callback();
+    }
   }
 
   /**

@@ -130,8 +130,8 @@ class CashbookController {
     `;
 
     App.openModal(title, content, [
-      { label: 'Abbrechen', class: 'btn-secondary', action: 'cancel', callback: () => App.closeModal() },
-      { label: 'Eintrag speichern', class: 'btn-primary', action: 'save', callback: () => this.saveManualEntry() }
+      { label: 'Abbrechen', class: 'btn-secondary', callback: () => App.closeModal() },
+      { label: 'Eintrag speichern', class: 'btn-primary', callback: () => this.saveManualEntry() }
     ]);
   }
 

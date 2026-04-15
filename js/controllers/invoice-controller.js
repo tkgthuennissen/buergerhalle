@@ -114,8 +114,8 @@ class InvoiceController {
 
     this.invoiceItems = [];
     App.openModal(title, content, [
-      { label: 'Abbrechen', class: 'btn-secondary', action: 'cancel', callback: () => App.closeModal() },
-      { label: 'Rechnung erstellen', class: 'btn-primary', action: 'create', callback: () => this.saveManualInvoice() }
+      { label: 'Abbrechen', class: 'btn-secondary', callback: () => App.closeModal() },
+      { label: 'Rechnung erstellen', class: 'btn-primary', callback: () => this.saveManualInvoice() }
     ]);
     this.populateInvoiceAddresses();
   }
