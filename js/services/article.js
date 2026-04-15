@@ -95,6 +95,23 @@ class ArticleService {
   }
 
   /**
+   * Gibt Einzelartikel nach Kategorie zurück
+   * @param {string} category - Die Kategorie ('Dienstleistungen', 'Verleihmaterial')
+   * @return {Array}
+   */
+  static getItemsByCategory(category) {
+    return storage.getItems().filter(item => item.category === category);
+  }
+
+  /**
+   * Gibt Dienstleistungen zurück
+   * @return {Array}
+   */
+  static getServices() {
+    return this.getItemsByCategory('Dienstleistungen');
+  }
+
+  /**
    * Berechnet die Zeit-Offsets eines Pakets für ein gegebenes Veranstaltungsdatum
    * 
    * Beispiel 3-Tage-Paket am Freitag 15. Juni:

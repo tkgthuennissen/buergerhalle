@@ -70,11 +70,11 @@ class BookingFormController {
   }
 
   /**
-   * Lädt Dropdown-Optionen für Zusatzartikel
+   * Lädt Dropdown-Optionen für Zusatzartikel (nur Dienstleistungen)
    */
   static populateItems() {
     const select = document.getElementById('item-select');
-    const items = ArticleService.getItems();
+    const items = ArticleService.getServices();
 
     items.forEach(item => {
       const option = document.createElement('option');

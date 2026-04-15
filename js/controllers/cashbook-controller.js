@@ -100,6 +100,64 @@ class CashbookController {
     App.showNotification('Eintrag gelöscht', 'success');
   }
 
+  static openManualEntryForm() {
+    const title = 'Manueller Kassenbucheintrag';
+    const content = `
+      <form id="cashbook-entry-form">
+        <div class="form-group">
+          <label for="entry-date">Datum *</label>
+          <input type="date" id="entry-date" value="${new Date().toISOString().split('T')[0]}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="entry-description">Beschreibung *</label>
+          <input type="text" id="entry-description" placeholder="z.B. Mieteinnahme, Büromaterial" required>
+        </div>
+
+        <div class="form-group">
+          <label for="entry-type">Typ *</label>
+          <select id="entry-type" required>
+            <option value="income">Einnahme</option>
+            <option value="expense">Ausgabe</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="entry-amount">Betrag (EUR) *</label>
+          <input type="number" id="entry-amount" step="0.01" min="0.01" required>
+        </div>
+      </form>
+    `;
+
+    App.showModal(title, content, () => this.saveManualEntry());
+  }
+
+  static saveManualEntry() {
+    const form = document.getElementById('cashbook-entry-form');
+    if (!form) return;
+
+    const data = {
+      date: document.getElementById('entry-date').value,
+      description: document.getElementById('entry-description').value.trim(),
+      type: document.getElementById('entry-type').value,
+      amount: parseFloat(document.getElementById('entry-amount').value) || 0
+    };
+
+    if (!data.date || !data.description || !data.amount) {
+      App.showNotification('Alle Felder sind erforderlich', 'error');
+      return;
+    }
+
+    try {
+      CashbookService.addManualEntry(data);
+      App.closeModal();
+      this.render();
+      App.showNotification('Eintrag hinzugefügt', 'success');
+    } catch (error) {
+      App.showNotification('Fehler: ' + error.message, 'error');
+    }
+  }
+
   static exportPDF() {
     alert('TODO: PDF-Export implementieren (z.B. mit html2pdf)');
   }

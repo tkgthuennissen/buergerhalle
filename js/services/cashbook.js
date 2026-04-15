@@ -54,6 +54,19 @@ class CashbookService {
   }
 
   /**
+   * Fügt einen manuellen Eintrag hinzu
+   * @param {Object} data - {date, description, type, amount}
+   * @return {Object} Neuer Eintrag
+   */
+  static addManualEntry(data) {
+    if (data.type === 'income') {
+      return this.addIncome(data.date, data.amount, data.description);
+    } else {
+      return this.addExpense(data.date, data.amount, data.description);
+    }
+  }
+
+  /**
    * Gibt alle Kassenbuch-Einträge zurück
    * @return {Array}
    */

@@ -49,7 +49,10 @@
     <main class="app-content">
       <div class="content-header flex-between">
         <h1>💳 Kassenbuch</h1>
-        <button class="btn btn-secondary" onclick="CashbookController.exportPDF()">📄 PDF exportieren</button>
+        <div>
+          <button class="btn btn-primary" onclick="CashbookController.openManualEntryForm()">➕ Manueller Eintrag</button>
+          <button class="btn btn-secondary" onclick="CashbookController.exportPDF()">📄 PDF exportieren</button>
+        </div>
       </div>
       
       <div class="content-body">
