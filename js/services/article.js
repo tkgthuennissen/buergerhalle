@@ -20,6 +20,7 @@ class ArticleService {
       name: packageData.name,
       description: packageData.description || '',
       type: 'package',
+      category: 'Pakete',
       unitPrice: parseFloat(packageData.unitPrice) || 0,
       currency: 'EUR',
       timeLogic: {
@@ -34,7 +35,7 @@ class ArticleService {
 
   /**
    * Erstellt einen neuen Einzelartikel
-   * @param {Object} itemData - {name, description, unitPrice}
+   * @param {Object} itemData - {name, description, unitPrice, category}
    * @return {Object} Neuer Artikel-Objekt
    */
   static createItem(itemData) {
@@ -45,6 +46,7 @@ class ArticleService {
       name: itemData.name,
       description: itemData.description || '',
       type: 'item',
+      category: itemData.category || 'Dienstleistungen',
       unitPrice: parseFloat(itemData.unitPrice) || 0,
       currency: 'EUR',
       createdAt: new Date().toISOString()

@@ -105,6 +105,7 @@ class ArticleController {
         <thead>
           <tr>
             <th>Name</th>
+            <th>Kategorie</th>
             <th>Beschreibung</th>
             <th>Preis</th>
             <th>Aktionen</th>
@@ -114,6 +115,7 @@ class ArticleController {
           ${items.map(item => `
             <tr>
               <td><strong>${this.escapeHtml(item.name)}</strong></td>
+              <td><small class="text-muted">${this.escapeHtml(item.category)}</small></td>
               <td>${this.escapeHtml(item.description)}</td>
               <td>${App.formatCurrency(item.unitPrice)}</td>
               <td>
@@ -160,6 +162,19 @@ class ArticleController {
           <input type="number" id="art-price" step="0.01" value="${article?.unitPrice || ''}" required>
         </div>
     `;
+
+    // Kategorie für Einzelartikel
+    if (type === 'item') {
+      content += `
+        <div class="form-group">
+          <label for="art-category">Kategorie *</label>
+          <select id="art-category" required>
+            <option value="Dienstleistungen" ${article?.category === 'Dienstleistungen' ? 'selected' : ''}>Dienstleistungen</option>
+            <option value="Verleihmaterial" ${article?.category === 'Verleihmaterial' ? 'selected' : ''}>Verleihmaterial</option>
+          </select>
+        </div>
+      `;
+    }
 
     // Zusätzliche Felder für Pakete
     if (type === 'package') {
@@ -230,6 +245,10 @@ class ArticleController {
       description: document.getElementById('art-desc').value.trim(),
       unitPrice: parseFloat(document.getElementById('art-price').value) || 0
     };
+
+    if (type === 'item') {
+      data.category = document.getElementById('art-category').value;
+    }
 
     if (type === 'package') {
       data.timeLogic = {

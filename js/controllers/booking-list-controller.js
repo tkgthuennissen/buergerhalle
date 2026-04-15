@@ -73,6 +73,7 @@ class BookingListController {
                 </td>
                 <td>
                   <div class="table-row-actions">
+                    <button class="icon-btn" onclick="BookingListController.createInvoice('${booking.id}')" title="Rechnung erstellen">💰</button>
                     <button class="icon-btn" onclick="window.location.href='/buergerhalle/pages/booking-form.html?id=${booking.id}'" title="Bearbeiten">✏️</button>
                     <button class="icon-btn danger" onclick="BookingListController.deleteBooking('${booking.id}')" title="Löschen">🗑️</button>
                   </div>
@@ -97,6 +98,25 @@ class BookingListController {
       BookingService.delete(bookingId);
       App.showNotification('Buchung gelöscht', 'success');
       this.render();
+    } catch (error) {
+      App.showNotification('Fehler: ' + error.message, 'error');
+    }
+  }
+
+  static createInvoice(bookingId) {
+    const booking = BookingService.getById(bookingId);
+    const address = AddressService.getById(booking.addressId);
+
+    if (!confirm(`Soll eine Rechnung für die Buchung von "${address?.name}" erstellt werden?`)) {
+      return;
+    }
+
+    try {
+      // Erstelle Rechnung mit Standard-Zahlungsmethode "bank_transfer"
+      const invoice = DocumentService.createInvoiceFromBooking(bookingId, 'bank_transfer');
+      DocumentService.save(invoice);
+      App.showNotification('Rechnung erstellt', 'success');
+      // Optional: Zur Dokumenten-Seite weiterleiten oder anzeigen
     } catch (error) {
       App.showNotification('Fehler: ' + error.message, 'error');
     }
