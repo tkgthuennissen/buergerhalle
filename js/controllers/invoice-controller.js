@@ -83,21 +83,34 @@ class InvoiceController {
         <hr style="margin: var(--spacing-lg) 0;">
         <h4>Artikel hinzufügen</h4>
 
+        <div class="form-group">
+          <label for="item-select">Artikel aus Verwaltung:</label>
+          <div class="form-row">
+            <select id="item-select" style="flex: 1;">
+              <option value="">-- Artikel auswählen --</option>
+            </select>
+            <button type="button" class="btn btn-secondary" onclick="InvoiceController.addFromArticleSelect()" style="margin-left: var(--spacing-md);">➕ Hinzufügen</button>
+          </div>
+        </div>
+
+        <hr style="margin: var(--spacing-md) 0;">
+        <p style="font-size: 0.9em; color: #666;">Oder manuell erfassen:</p>
+
         <div class="form-row">
           <div class="form-group">
             <label for="item-description">Beschreibung *</label>
-            <input type="text" id="item-description" placeholder="Artikelbeschreibung" required>
+            <input type="text" id="item-description" placeholder="Artikelbeschreibung">
           </div>
           <div class="form-group">
             <label for="item-quantity">Menge *</label>
-            <input type="number" id="item-quantity" value="1" min="1" required>
+            <input type="number" id="item-quantity" value="1" min="1">
           </div>
           <div class="form-group">
             <label for="item-price">Preis (EUR) *</label>
-            <input type="number" id="item-price" step="0.01" min="0.01" required>
+            <input type="number" id="item-price" step="0.01" min="0.01">
           </div>
           <div class="form-group" style="align-self: flex-end;">
-            <button type="button" class="btn btn-secondary" onclick="InvoiceController.addItemToInvoice()">➕ Hinzufügen</button>
+            <button type="button" class="btn btn-secondary" onclick="InvoiceController.addItemToInvoice()">➕ Manuell hinzufügen</button>
           </div>
         </div>
 
@@ -118,19 +131,62 @@ class InvoiceController {
       { label: 'Abbrechen', class: 'btn-secondary', callback: () => App.closeModal() },
       { label: 'Rechnung erstellen', class: 'btn-primary', callback: () => self.saveManualInvoice() }
     ]);
-    this.populateInvoiceAddresses();
+    this.populateInvoiceData();
   }
 
-  static populateInvoiceAddresses() {
-    const select = document.getElementById('invoice-address');
+  static populateInvoiceData() {
+    // Adressen laden
+    const addressSelect = document.getElementById('invoice-address');
     const addresses = AddressService.getAll();
 
     addresses.forEach(addr => {
       const option = document.createElement('option');
       option.value = addr.id;
       option.textContent = addr.name;
-      select.appendChild(option);
+      addressSelect.appendChild(option);
     });
+
+    // Artikel laden
+    const itemSelect = document.getElementById('item-select');
+    const allArticles = [
+      ...ArticleService.getPackages().map(p => ({ ...p, type: 'package', label: `📦 ${p.name}` })),
+      ...ArticleService.getItems().map(i => ({ ...i, type: 'item', label: `📝 ${i.name}` }))
+    ];
+
+    allArticles.forEach(article => {
+      const option = document.createElement('option');
+      option.value = article.id;
+      option.textContent = `${article.label} – ${App.formatCurrency(article.unitPrice)}`;
+      option.dataset.articleData = JSON.stringify(article);
+      itemSelect.appendChild(option);
+    });
+  }
+
+  static addFromArticleSelect() {
+    const itemSelect = document.getElementById('item-select');
+    const selectedId = itemSelect.value;
+
+    if (!selectedId) {
+      App.showNotification('Bitte einen Artikel auswählen', 'error');
+      return;
+    }
+
+    const option = itemSelect.options[itemSelect.selectedIndex];
+    const articleData = JSON.parse(option.dataset.articleData);
+    
+    // Preis kann vom Benutzer geändert werden, daher verwenden wir den aus der Option
+    const quantity = parseInt(document.getElementById('item-quantity')?.value) || 1;
+    
+    this.invoiceItems.push({
+      description: articleData.name,
+      quantity,
+      unitPrice: articleData.unitPrice,
+      total: quantity * articleData.unitPrice
+    });
+
+    this.renderInvoiceItems();
+    itemSelect.value = '';
+    document.getElementById('item-quantity').value = '1';
   }
 
   static addItemToInvoice() {
