@@ -73,7 +73,7 @@ class BookingListController {
                 </td>
                 <td>
                   <div class="table-row-actions">
-                    <button class="icon-btn" onclick="BookingListController.createInvoice('${booking.id}')" title="Rechnung erstellen">💰</button>
+                    ${booking.status === 'confirmed' ? `<button class="icon-btn" onclick="BookingListController.createInvoice('${booking.id}')" title="Rechnung erstellen">💰</button>` : ''}
                     <button class="icon-btn" onclick="window.location.href='/buergerhalle/pages/booking-form.html?id=${booking.id}'" title="Bearbeiten">✏️</button>
                     <button class="icon-btn danger" onclick="BookingListController.deleteBooking('${booking.id}')" title="Löschen">🗑️</button>
                   </div>
