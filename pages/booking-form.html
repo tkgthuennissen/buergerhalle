@@ -61,6 +61,10 @@
     <main class="app-content">
       <div class="content-header">
         <h1 id="page-title">➕ Neue Buchung</h1>
+        <div id="booking-actions" style="display: none;">
+          <button class="btn btn-secondary" onclick="BookingFormController.createContract()" title="Vertrag erstellen">📄 Vertrag</button>
+          <button class="btn btn-primary" onclick="BookingFormController.createInvoice()" title="Rechnung erstellen">💰 Rechnung</button>
+        </div>
       </div>
       
       <div class="content-body">

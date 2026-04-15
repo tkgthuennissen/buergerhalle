@@ -73,6 +73,7 @@ class BookingListController {
                 </td>
                 <td>
                   <div class="table-row-actions">
+                    <button class="icon-btn" onclick="BookingListController.createContract('${booking.id}')" title="Vertrag erstellen">📄</button>
                     ${booking.status === 'confirmed' ? `<button class="icon-btn" onclick="BookingListController.createInvoice('${booking.id}')" title="Rechnung erstellen">💰</button>` : ''}
                     <button class="icon-btn" onclick="window.location.href='/buergerhalle/pages/booking-form.html?id=${booking.id}'" title="Bearbeiten">✏️</button>
                     <button class="icon-btn danger" onclick="BookingListController.deleteBooking('${booking.id}')" title="Löschen">🗑️</button>
@@ -98,6 +99,23 @@ class BookingListController {
       BookingService.delete(bookingId);
       App.showNotification('Buchung gelöscht', 'success');
       this.render();
+    } catch (error) {
+      App.showNotification('Fehler: ' + error.message, 'error');
+    }
+  }
+
+  static createContract(bookingId) {
+    const booking = BookingService.getById(bookingId);
+    const address = AddressService.getById(booking.addressId);
+
+    if (!confirm(`Soll ein Vertrag für die Buchung von "${address?.name}" erstellt werden?`)) {
+      return;
+    }
+
+    try {
+      const contract = DocumentService.createContractFromBooking(bookingId);
+      DocumentService.save(contract);
+      App.showNotification('Vertrag erstellt', 'success');
     } catch (error) {
       App.showNotification('Fehler: ' + error.message, 'error');
     }

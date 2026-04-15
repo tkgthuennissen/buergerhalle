@@ -29,6 +29,7 @@ class BookingFormController {
 
     if (this.editingBookingId) {
       this.loadBooking();
+      this.showBookingActions();
     }
 
     this.setupEventListeners();
@@ -279,6 +280,52 @@ class BookingFormController {
       setTimeout(() => {
         window.location.href = '/buergerhalle/pages/bookings.html';
       }, 1500);
+    } catch (error) {
+      App.showNotification('Fehler: ' + error.message, 'error');
+    }
+  }
+
+  static showBookingActions() {
+    const actions = document.getElementById('booking-actions');
+    if (actions) {
+      actions.style.display = 'block';
+    }
+  }
+
+  static createContract() {
+    if (!this.editingBookingId) return;
+
+    const booking = BookingService.getById(this.editingBookingId);
+    const address = AddressService.getById(booking.addressId);
+
+    if (!confirm(`Soll ein Vertrag für die Buchung von "${address?.name}" erstellt werden?`)) {
+      return;
+    }
+
+    try {
+      const contract = DocumentService.createContractFromBooking(this.editingBookingId);
+      DocumentService.save(contract);
+      App.showNotification('Vertrag erstellt', 'success');
+    } catch (error) {
+      App.showNotification('Fehler: ' + error.message, 'error');
+    }
+  }
+
+  static createInvoice() {
+    if (!this.editingBookingId) return;
+
+    const booking = BookingService.getById(this.editingBookingId);
+    const address = AddressService.getById(booking.addressId);
+
+    if (!confirm(`Soll eine Rechnung für die Buchung von "${address?.name}" erstellt werden?`)) {
+      return;
+    }
+
+    try {
+      // Erstelle Rechnung mit Standard-Zahlungsmethode "bank_transfer"
+      const invoice = DocumentService.createInvoiceFromBooking(this.editingBookingId, 'bank_transfer');
+      DocumentService.save(invoice);
+      App.showNotification('Rechnung erstellt', 'success');
     } catch (error) {
       App.showNotification('Fehler: ' + error.message, 'error');
     }
