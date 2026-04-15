@@ -216,6 +216,16 @@ class App {
   }
 
   /**
+   * Schließt den aktuellen Modal-Dialog
+   */
+  static closeModal() {
+    const modal = document.querySelector('.modal-overlay');
+    if (modal) {
+      modal.remove();
+    }
+  }
+
+  /**
    * Exportiert Daten als JSON-Datei (Download)
    */
   static exportData() {

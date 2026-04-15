@@ -56,6 +56,70 @@ class InvoiceController {
     `;
   }
 
+  static openNewInvoiceForm() {
+    const title = 'Neue manuelle Rechnung';
+    const content = `
+      <form id="manual-invoice-form">
+        <div class="form-group">
+          <label for="invoice-address">Kunde *</label>
+          <select id="invoice-address" required>
+            <option value="">-- Kunde auswählen --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="invoice-date">Rechnungsdatum *</label>
+          <input type="date" id="invoice-date" value="${new Date().toISOString().split('T')[0]}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="invoice-payment-method">Zahlungsmethode *</label>
+          <select id="invoice-payment-method" required>
+            <option value="bank_transfer">Überweisung</option>
+            <option value="cash">Bar</option>
+          </select>
+        </div>
+
+        <hr style="margin: var(--spacing-lg) 0;">
+        <h4>Artikel hinzufügen</h4>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="item-description">Beschreibung *</label>
+            <input type="text" id="item-description" placeholder="Artikelbeschreibung" required>
+          </div>
+          <div class="form-group">
+            <label for="item-quantity">Menge *</label>
+            <input type="number" id="item-quantity" value="1" min="1" required>
+          </div>
+          <div class="form-group">
+            <label for="item-price">Preis (EUR) *</label>
+            <input type="number" id="item-price" step="0.01" min="0.01" required>
+          </div>
+          <div class="form-group" style="align-self: flex-end;">
+            <button type="button" class="btn btn-secondary" onclick="InvoiceController.addItemToInvoice()">➕ Hinzufügen</button>
+          </div>
+        </div>
+
+        <div id="invoice-items-list" style="margin-top: var(--spacing-md);">
+          <p class="text-muted">Noch keine Artikel hinzugefügt.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="invoice-notes">Notizen</label>
+          <textarea id="invoice-notes" placeholder="Optionale Notizen zur Rechnung"></textarea>
+        </div>
+      </form>
+    `;
+
+    this.invoiceItems = [];
+    App.openModal(title, content, [
+      { label: 'Abbrechen', class: 'btn-secondary', action: 'cancel', callback: () => App.closeModal() },
+      { label: 'Rechnung erstellen', class: 'btn-primary', action: 'create', callback: () => this.saveManualInvoice() }
+    ]);
+    this.populateInvoiceAddresses();
+  }
+
   static populateInvoiceAddresses() {
     const select = document.getElementById('invoice-address');
     const addresses = AddressService.getAll();
