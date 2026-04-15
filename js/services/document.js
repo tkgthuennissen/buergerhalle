@@ -120,23 +120,13 @@ class DocumentService {
 
   /**
    * Speichert ein Dokument
-   * Wenn Rechnung mit paymentMethod="cash": erzeugt Kassenbuch-Eintrag
+   * Kassenbuch-Einträge werden nur erstellt, wenn die Rechnung als bezahlt markiert wird
    * 
    * @param {Object} document
    */
   static save(document) {
     document.updatedAt = new Date().toISOString();
     storage.saveDocument(document);
-
-    // Bar-Rechnung → Kassenbuch-Eintrag
-    if (document.type === 'invoice' && document.paymentMethod === 'cash') {
-      CashbookService.addIncome(
-        document.documentDate,
-        document.total,
-        'Rechnung ' + document.documentNumber,
-        document.id
-      );
-    }
   }
 
   /**

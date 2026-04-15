@@ -35,19 +35,25 @@ class InvoiceController {
             <th>Kunde</th>
             <th>Summe</th>
             <th>Status</th>
+            <th>Zahlungsart</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           ${manualInvoices.map(inv => {
             const addr = AddressService.getById(inv.addressId);
+            const paymentLabel = inv.paymentMethod === 'cash' ? '💵 Bar' : '🏦 Überweisung';
             return `<tr>
               <td>${inv.documentNumber}</td>
               <td>${addr?.name || '—'}</td>
               <td>${App.formatCurrency(inv.total)}</td>
-              <td><span class="badge badge-${inv.status}">${inv.status}</span></td>
+              <td><span class="badge badge-${inv.status}">${inv.status === 'paid' ? '✓ Bezahlt' : inv.status === 'created' ? 'Offen' : inv.status}</span></td>
+              <td><small>${paymentLabel}</small></td>
               <td>
-                <button class="icon-btn" onclick="InvoiceController.editInvoice('${inv.id}')">✏️</button>
+                <div class="table-row-actions">
+                  ${inv.paymentMethod === 'cash' && inv.status !== 'paid' ? `<button class="icon-btn" onclick="InvoiceController.markAsPaid('${inv.id}')" title="Als bezahlt markieren">💰</button>` : ''}
+                  <button class="icon-btn" onclick="InvoiceController.editInvoice('${inv.id}')">✏️</button>
+                </div>
               </td>
             </tr>`;
           }).join('')}
@@ -89,6 +95,7 @@ class InvoiceController {
             <select id="item-select" style="flex: 1;">
               <option value="">-- Artikel auswählen --</option>
             </select>
+            <input type="number" id="item-select-quantity" min="1" value="1" placeholder="Menge" style="width: 80px; margin-left: var(--spacing-md);">
             <button type="button" class="btn btn-secondary" onclick="InvoiceController.addFromArticleSelect()" style="margin-left: var(--spacing-md);">➕ Hinzufügen</button>
           </div>
         </div>
@@ -165,17 +172,21 @@ class InvoiceController {
   static addFromArticleSelect() {
     const itemSelect = document.getElementById('item-select');
     const selectedId = itemSelect.value;
+    const quantityInput = document.getElementById('item-select-quantity');
 
     if (!selectedId) {
       App.showNotification('Bitte einen Artikel auswählen', 'error');
       return;
     }
 
+    const quantity = parseInt(quantityInput?.value) || 1;
+    if (quantity <= 0) {
+      App.showNotification('Menge muss mindestens 1 sein', 'error');
+      return;
+    }
+
     const option = itemSelect.options[itemSelect.selectedIndex];
     const articleData = JSON.parse(option.dataset.articleData);
-    
-    // Preis kann vom Benutzer geändert werden, daher verwenden wir den aus der Option
-    const quantity = parseInt(document.getElementById('item-quantity')?.value) || 1;
     
     this.invoiceItems.push({
       description: articleData.name,
@@ -186,7 +197,7 @@ class InvoiceController {
 
     this.renderInvoiceItems();
     itemSelect.value = '';
-    document.getElementById('item-quantity').value = '1';
+    if (quantityInput) quantityInput.value = '1';
   }
 
   static addItemToInvoice() {
@@ -293,6 +304,47 @@ class InvoiceController {
       App.showNotification('Rechnung erstellt', 'success');
     } catch (error) {
       console.error('Fehler bei Rechnungserstellung:', error);
+      App.showNotification('Fehler: ' + error.message, 'error');
+    }
+  }
+
+  static markAsPaid(invoiceId) {
+    const invoice = DocumentService.getById(invoiceId);
+    if (!invoice) {
+      App.showNotification('Rechnung nicht gefunden', 'error');
+      return;
+    }
+
+    if (invoice.status === 'paid') {
+      App.showNotification('Rechnung ist bereits bezahlt', 'info');
+      return;
+    }
+
+    const address = AddressService.getById(invoice.addressId);
+    if (!confirm(`Soll die Rechnung für "${address?.name}" als bezahlt markiert werden?`)) {
+      return;
+    }
+
+    try {
+      // Markiere als bezahlt
+      invoice.status = 'paid';
+      invoice.updatedAt = new Date().toISOString();
+      storage.saveDocument(invoice);
+
+      // Erstelle Kassenbuch-Eintrag (nur bei Barzahlung)
+      if (invoice.paymentMethod === 'cash') {
+        CashbookService.addIncome(
+          invoice.documentDate,
+          invoice.total,
+          'Rechnung ' + invoice.documentNumber,
+          invoice.id
+        );
+      }
+
+      this.render();
+      App.showNotification('Rechnung als bezahlt markiert', 'success');
+    } catch (error) {
+      console.error('Fehler beim Markieren als bezahlt:', error);
       App.showNotification('Fehler: ' + error.message, 'error');
     }
   }
