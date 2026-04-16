@@ -6,6 +6,10 @@
 
 class DocumentController {
 
+  static init() {
+    this.render();
+  }
+
   static render() {
     this.renderContracts();
     this.renderInvoices();
