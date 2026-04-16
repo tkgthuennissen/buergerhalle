@@ -1,0 +1,105 @@
+/* pdf.css - Styles für PDF-Export (DIN A4, DIN 5008) */
+
+/* Basis-Styles für PDF-Generierung */
+.pdf-document {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 12pt;
+    line-height: 1.4;
+    color: #000;
+    margin: 0;
+    padding: 25mm; /* DIN A4 Ränder */
+    box-sizing: border-box;
+    max-width: 210mm; /* DIN A4 Breite */
+    min-height: 297mm; /* DIN A4 Höhe */
+    background: #fff;
+}
+
+/* Kopfzeile */
+.pdf-header {
+    border-bottom: 1px solid #000;
+    padding-bottom: 10mm;
+    margin-bottom: 15mm;
+    text-align: center;
+    font-size: 14pt;
+    font-weight: bold;
+}
+
+/* Haupttext */
+.pdf-body {
+    margin-bottom: 20mm;
+    text-align: justify;
+}
+
+/* Fußzeile */
+.pdf-footer {
+    border-top: 1px solid #000;
+    padding-top: 10mm;
+    margin-top: 20mm;
+    font-size: 10pt;
+    color: #666;
+}
+
+/* Tabellen für Rechnungspositionen */
+.pdf-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10mm 0;
+}
+
+.pdf-table th,
+.pdf-table td {
+    border: 1px solid #000;
+    padding: 3mm;
+    text-align: left;
+}
+
+.pdf-table th {
+    background: #f0f0f0;
+    font-weight: bold;
+}
+
+/* Unterschriftsbereich */
+.signature-section {
+    margin-top: 30mm;
+    display: flex;
+    justify-content: space-between;
+}
+
+.signature-box {
+    width: 45%;
+    border: 1px solid #000;
+    padding: 20mm;
+    text-align: center;
+}
+
+.signature-line {
+    border-bottom: 1px solid #000;
+    margin: 10mm 0;
+    height: 1mm;
+}
+
+/* Status-Informationen */
+.status-info {
+    font-size: 8pt;
+    color: #666;
+    border-top: 1px solid #ccc;
+    padding-top: 5mm;
+    margin-top: 10mm;
+}
+
+/* Seitenumbrüche für mehrseitige Dokumente */
+.page-break {
+    page-break-before: always;
+}
+
+/* Druckoptimierungen */
+@media print {
+    .pdf-document {
+        margin: 0;
+        padding: 20mm;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+}

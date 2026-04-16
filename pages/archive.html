@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archiv - Bürgerhalle</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <header>
+        <nav id="main-nav">
+            <div class="nav-container">
+                <h1>Bürgerhalle Verwaltung</h1>
+                <ul>
+                    <li><a href="index.html">Dashboard</a></li>
+                    <li><a href="addresses.html">Adressen</a></li>
+                    <li><a href="articles.html">Artikel</a></li>
+                    <li><a href="calendar.html">Kalender</a></li>
+                    <li><a href="bookings.html">Buchungen</a></li>
+                    <li><a href="documents.html">Dokumente</a></li>
+                    <li><a href="invoices.html">Rechnungen</a></li>
+                    <li><a href="cashbook.html">Kassenbuch</a></li>
+                    <li><a href="templates.html">Templates</a></li>
+                    <li><a href="workflows.html">Workflows</a></li>
+                    <li><a href="archive.html" class="active">Archiv</a></li>
+                    <li><a href="reports.html">Berichte</a></li>
+                    <li><a href="reports.html">Berichte</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <h2>Archiv & Lösch-Management</h2>
+
+            <div class="archive-info">
+                <h3>DSGVO & GoBD konforme Archivierung</h3>
+                <div class="retention-info">
+                    <h4>Aufbewahrungsfristen</h4>
+                    <ul>
+                        <li><strong>Rechnungen:</strong> 10 Jahre (GoBD)</li>
+                        <li><strong>Verträge:</strong> 6-10 Jahre (konfigurierbar)</li>
+                        <li><strong>Adressen:</strong> 3 Jahre nach letzter Aktivität (DSGVO)</li>
+                    </ul>
+                </div>
+
+                <div class="actions-bar">
+                    <label>
+                        <input type="checkbox" id="filter-archived"> Archivierte Einträge anzeigen
+                    </label>
+                    <button id="check-retention-btn" class="btn btn-warning">Aufbewahrungsfristen prüfen</button>
+                </div>
+            </div>
+
+            <div id="archive-list" class="archive-list">
+                <!-- Archiv-Einträge werden hier geladen -->
+            </div>
+        </div>
+    </main>
+
+    <script src="js/storage.js"></script>
+    <script src="js/services/archive.js"></script>
+    <script src="js/controllers/archive-controller.js"></script>
+</body>
+</html>

@@ -49,7 +49,11 @@ class Storage {
       numbering: {
         invoices: { [new Date().getFullYear()]: 1 },
         contracts: { [new Date().getFullYear()]: 1 }
-      }
+      },
+      templates: this.initializeDefaultTemplates(),
+      workflows: [],
+      archive: [],
+      settings: this.initializeDefaultSettings()
     };
     this.save();
   }
@@ -121,6 +125,51 @@ class Storage {
   }
 
   /**
+   * Initialisiert Standard-Templates
+   */
+  initializeDefaultTemplates() {
+    return [
+      {
+        id: 'tmpl_contract_1',
+        type: 'contract',
+        name: 'Standard-Vertrag',
+        header: 'Bürgerhalle Musterstadt\nVertrag Nr. {{Dokument.Nummer}}',
+        body: 'Hiermit wird die Anmietung der Bürgerhalle vereinbart.\n\nKunde: {{Adresse.Name}}\nAdresse: {{Adresse.Strasse}}, {{Adresse.PLZ}} {{Adresse.Stadt}}\nZeitraum: {{Buchung.Zeitraum}}\nPaket: {{Artikel.Name}}\nGesamtpreis: {{Dokument.Total}} €\n\nZahlungsbedingungen: Vorkasse\n\nMit freundlichen Grüßen,\nBürgerhalle Musterstadt',
+        footer: 'Unterschrift Mieter: ____________________\nDatum: {{Dokument.Datum}}\n\nUnterschrift Vermieter: ____________________\nDatum: {{Dokument.Datum}}',
+        placeholders: ['{{Dokument.Nummer}}', '{{Adresse.Name}}', '{{Adresse.Strasse}}', '{{Adresse.PLZ}}', '{{Adresse.Stadt}}', '{{Buchung.Zeitraum}}', '{{Artikel.Name}}', '{{Dokument.Total}}', '{{Dokument.Datum}}'],
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 'tmpl_invoice_1',
+        type: 'invoice',
+        name: 'Standard-Rechnung',
+        header: 'Bürgerhalle Musterstadt\nRechnung Nr. {{Dokument.Nummer}}',
+        body: 'Rechnung für die Anmietung der Bürgerhalle.\n\nKunde: {{Adresse.Name}}\nAdresse: {{Adresse.Strasse}}, {{Adresse.PLZ}} {{Adresse.Stadt}}\nZeitraum: {{Buchung.Zeitraum}}\nPaket: {{Artikel.Name}}\n\nPositionen:\n{{Dokument.Positionen}}\n\nZwischensumme: {{Dokument.Subtotal}} €\nMwSt.: {{Dokument.Steuer}} €\nGesamt: {{Dokument.Total}} €',
+        footer: 'Zahlbar innerhalb von 14 Tagen.\n\nMit freundlichen Grüßen,\nBürgerhalle Musterstadt',
+        placeholders: ['{{Dokument.Nummer}}', '{{Adresse.Name}}', '{{Adresse.Strasse}}', '{{Adresse.PLZ}}', '{{Adresse.Stadt}}', '{{Buchung.Zeitraum}}', '{{Artikel.Name}}', '{{Dokument.Positionen}}', '{{Dokument.Subtotal}}', '{{Dokument.Steuer}}', '{{Dokument.Total}}'],
+        createdAt: new Date().toISOString()
+      }
+    ];
+  }
+
+  /**
+   * Initialisiert Standard-Einstellungen
+   */
+  initializeDefaultSettings() {
+    return {
+      retentionPeriods: {
+        invoices: 10, // Jahre
+        contracts: 6, // Jahre
+        addresses: 3  // Jahre
+      },
+      gdprSettings: {
+        autoAnonymize: true,
+        anonymizeAfterYears: 2
+      }
+    };
+  }
+
+  /**
    * Validiert die Datenstruktur (einfache Checks)
    */
   validate() {
@@ -128,12 +177,61 @@ class Storage {
       throw new Error('Ungültige Datenstruktur');
     }
     
-    const required = ['addresses', 'articles', 'bookings', 'documents', 'cashbook', 'numbering'];
+    const required = ['addresses', 'articles', 'bookings', 'documents', 'cashbook', 'numbering', 'templates', 'workflows', 'archive', 'settings'];
     for (const field of required) {
       if (!(field in this.data)) {
-        throw new Error(`Fehlendes Feld: ${field}`);
+        this.migrate();
+        break;
       }
     }
+  }
+
+  /**
+   * Migriert alte Datenstrukturen zu neuen
+   */
+  migrate() {
+    console.log('Datenmigration gestartet...');
+    
+    // Neue Felder hinzufügen
+    if (!this.data.templates) {
+      this.data.templates = this.initializeDefaultTemplates();
+    }
+    if (!this.data.workflows) {
+      this.data.workflows = [];
+    }
+    if (!this.data.archive) {
+      this.data.archive = [];
+    }
+    if (!this.data.settings) {
+      this.data.settings = this.initializeDefaultSettings();
+    }
+
+    // Bestehende Adressen erweitern
+    this.data.addresses = this.data.addresses.map(addr => ({
+      ...addr,
+      gdprConsent: addr.gdprConsent || false,
+      anonymized: addr.anonymized || false,
+      archiveStatus: addr.archiveStatus || null,
+      archiveDate: addr.archiveDate || null
+    }));
+
+    // Bestehende Dokumente erweitern
+    this.data.documents = this.data.documents.map(doc => ({
+      ...doc,
+      status: doc.status || 'created',
+      workflowHistory: doc.workflowHistory || [{
+        status: doc.status || 'created',
+        timestamp: doc.createdAt,
+        user: 'system'
+      }],
+      templateId: doc.templateId || (doc.type === 'contract' ? 'tmpl_contract_1' : 'tmpl_invoice_1'),
+      pdfHash: doc.pdfHash || null,
+      archiveStatus: doc.archiveStatus || null,
+      archiveDate: doc.archiveDate || null
+    }));
+
+    this.save();
+    console.log('Datenmigration abgeschlossen.');
   }
 
   /**
@@ -238,6 +336,50 @@ class Storage {
    */
   getNumbering() {
     return this.data.numbering || {};
+  }
+
+  /**
+   * @return {Array} Alle Templates
+   */
+  getTemplates() {
+    return this.data.templates || [];
+  }
+
+  /**
+   * @param {string} id - Template-ID
+   * @return {Object|null} Template oder null
+   */
+  getTemplateById(id) {
+    return this.data.templates.find(t => t.id === id) || null;
+  }
+
+  /**
+   * @return {Array} Alle Workflows
+   */
+  getWorkflows() {
+    return this.data.workflows || [];
+  }
+
+  /**
+   * @param {string} id - Workflow-ID
+   * @return {Object|null} Workflow oder null
+   */
+  getWorkflowById(id) {
+    return this.data.workflows.find(w => w.id === id) || null;
+  }
+
+  /**
+   * @return {Array} Alle Archiv-Einträge
+   */
+  getArchive() {
+    return this.data.archive || [];
+  }
+
+  /**
+   * @return {Object} Einstellungen
+   */
+  getSettings() {
+    return this.data.settings || {};
   }
 
   // ============================================================================
@@ -358,7 +500,69 @@ class Storage {
     this.data.numbering = numbering;
     this.save();
   }
+  /**
+   * Speichert ein neues oder aktualisiertes Template
+   * @param {Object} template - Template-Objekt mit id
+   */
+  saveTemplate(template) {
+    const index = this.data.templates.findIndex(t => t.id === template.id);
+    if (index >= 0) {
+      this.data.templates[index] = template;
+    } else {
+      this.data.templates.push(template);
+    }
+    this.save();
+  }
 
+  /**
+   * Löscht ein Template
+   * @param {string} id - Template-ID
+   */
+  deleteTemplate(id) {
+    this.data.templates = this.data.templates.filter(t => t.id !== id);
+    this.save();
+  }
+
+  /**
+   * Speichert einen neuen oder aktualisierten Workflow
+   * @param {Object} workflow - Workflow-Objekt mit id
+   */
+  saveWorkflow(workflow) {
+    const index = this.data.workflows.findIndex(w => w.id === workflow.id);
+    if (index >= 0) {
+      this.data.workflows[index] = workflow;
+    } else {
+      this.data.workflows.push(workflow);
+    }
+    this.save();
+  }
+
+  /**
+   * Löscht einen Workflow
+   * @param {string} id - Workflow-ID
+   */
+  deleteWorkflow(id) {
+    this.data.workflows = this.data.workflows.filter(w => w.id !== id);
+    this.save();
+  }
+
+  /**
+   * Speichert einen neuen Archiv-Eintrag
+   * @param {Object} archiveEntry - Archiv-Eintrag
+   */
+  saveArchiveEntry(archiveEntry) {
+    this.data.archive.push(archiveEntry);
+    this.save();
+  }
+
+  /**
+   * Speichert Einstellungen
+   * @param {Object} settings - Einstellungen-Objekt
+   */
+  saveSettings(settings) {
+    this.data.settings = settings;
+    this.save();
+  }
   // ============================================================================
   // Utility-Funktionen
   // ============================================================================

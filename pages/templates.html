@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokumenten-Templates - Bürgerhalle</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/templates.css">
+</head>
+<body>
+    <header>
+        <nav id="main-nav">
+            <div class="nav-container">
+                <h1>Bürgerhalle Verwaltung</h1>
+                <ul>
+                    <li><a href="index.html">Dashboard</a></li>
+                    <li><a href="addresses.html">Adressen</a></li>
+                    <li><a href="articles.html">Artikel</a></li>
+                    <li><a href="calendar.html">Kalender</a></li>
+                    <li><a href="bookings.html">Buchungen</a></li>
+                    <li><a href="documents.html">Dokumente</a></li>
+                    <li><a href="invoices.html">Rechnungen</a></li>
+                    <li><a href="cashbook.html">Kassenbuch</a></li>
+                    <li><a href="templates.html" class="active">Templates</a></li>
+                    <li><a href="workflows.html">Workflows</a></li>
+                    <li><a href="archive.html">Archiv</a></li>
+                    <li><a href="reports.html">Berichte</a></li>
+                    <li><a href="workflows.html">Workflows</a></li>
+                    <li><a href="archive.html">Archiv</a></li>
+                    <li><a href="reports.html">Berichte</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <h2>Dokumenten-Templates</h2>
+
+            <div class="actions-bar">
+                <button id="create-template-btn" class="btn btn-primary">Neues Template</button>
+            </div>
+
+            <div id="template-form" class="form-container" style="display: none;">
+                <h3>Template bearbeiten</h3>
+                <form id="template-edit-form">
+                    <input type="hidden" id="template-id">
+
+                    <div class="form-group">
+                        <label for="template-name">Name:</label>
+                        <input type="text" id="template-name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="template-type">Typ:</label>
+                        <select id="template-type" required>
+                            <option value="contract">Vertrag</option>
+                            <option value="invoice">Rechnung</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="template-header">Kopfzeile:</label>
+                        <textarea id="template-header" rows="3" placeholder="z.B. Bürgerhalle Musterstadt&#10;Vertrag Nr. {{Dokument.Nummer}}"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="template-body">Haupttext:</label>
+                        <textarea id="template-body" rows="10" placeholder="Vertragstext mit Platzhaltern wie {{Adresse.Name}}"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="template-footer">Fußzeile:</label>
+                        <textarea id="template-footer" rows="3" placeholder="z.B. Unterschrift: ____________________&#10;Datum: {{Dokument.Datum}}"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="save-template-btn" class="btn btn-primary">Speichern</button>
+                        <button type="button" id="cancel-template-btn" class="btn btn-secondary">Abbrechen</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="placeholders-info">
+                <h3>Verfügbare Platzhalter</h3>
+                <div class="placeholders-grid">
+                    <div>
+                        <h4>Dokument</h4>
+                        <ul>
+                            <li>{{Dokument.Nummer}}</li>
+                            <li>{{Dokument.Datum}}</li>
+                            <li>{{Dokument.Total}}</li>
+                            <li>{{Dokument.Subtotal}}</li>
+                            <li>{{Dokument.Steuer}}</li>
+                            <li>{{Dokument.Positionen}}</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Adresse</h4>
+                        <ul>
+                            <li>{{Adresse.Name}}</li>
+                            <li>{{Adresse.Strasse}}</li>
+                            <li>{{Adresse.PLZ}}</li>
+                            <li>{{Adresse.Stadt}}</li>
+                            <li>{{Adresse.Telefon}}</li>
+                            <li>{{Adresse.Email}}</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Buchung</h4>
+                        <ul>
+                            <li>{{Buchung.Zeitraum}}</li>
+                            <li>{{Buchung.Datum}}</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Artikel</h4>
+                        <ul>
+                            <li>{{Artikel.Name}}</li>
+                            <li>{{Artikel.Preis}}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="templates-list" class="templates-list">
+                <!-- Templates werden hier geladen -->
+            </div>
+        </div>
+    </main>
+
+    <script src="js/storage.js"></script>
+    <script src="js/services/template.js"></script>
+    <script src="js/controllers/template-controller.js"></script>
+</body>
+</html>

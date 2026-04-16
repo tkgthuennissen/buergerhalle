@@ -5,10 +5,6 @@
  */
 
 class DocumentController {
-  static init() {
-    console.log('DocumentController initialisiert');
-    this.render();
-  }
 
   static render() {
     this.renderContracts();
@@ -242,7 +238,7 @@ class DocumentController {
     `;
 
     App.openModal(title, modalContent, [
-      { label: 'Schließen', class: 'btn-secondary', callback: () => App.closeModal() }
+      { label: 'Schließen', action: 'close' }
     ]);
   }
 
@@ -257,6 +253,60 @@ class DocumentController {
     } catch (error) {
       App.showNotification('Fehler: ' + error.message, 'error');
     }
+  }
+
+  static getWorkflowButtons(doc) {
+    const workflow = WorkflowService.getByDocumentId(doc.id);
+    if (!workflow) return '';
+
+    const currentState = workflow.currentState;
+    const nextStates = workflow.states[currentState]?.next || [];
+
+    return nextStates.map(status => `
+      <button class="icon-btn" onclick="DocumentController.changeWorkflowStatus('${doc.id}', '${status}')" title="→ ${this.translateStatus(status)}">
+        ${this.getStatusIcon(status)}
+      </button>
+    `).join('');
+  }
+
+  static translateStatus(status) {
+    const translations = {
+      draft: 'Entwurf',
+      confirmed: 'Bestätigt',
+      signed: 'Unterschrieben',
+      paid: 'Bezahlt',
+      completed: 'Abgeschlossen',
+      created: 'Erstellt'
+    };
+    return translations[status] || status;
+  }
+
+  static getStatusIcon(status) {
+    const icons = {
+      confirmed: '✅',
+      signed: '✍️',
+      paid: '💰',
+      completed: '🏁'
+    };
+    return icons[status] || '➡️';
+  }
+
+  static changeWorkflowStatus(docId, newStatus) {
+    try {
+      WorkflowService.changeStatus(docId, newStatus);
+      App.showNotification('Status erfolgreich geändert', 'success');
+      this.render();
+    } catch (error) {
+      App.showNotification('Fehler: ' + error.message, 'error');
+    }
+  }
+
+  static exportPDF(docId) {
+    PdfExportService.exportDocument(docId).then(() => {
+      App.showNotification('PDF erfolgreich exportiert', 'success');
+    }).catch(error => {
+      App.showNotification('PDF-Export fehlgeschlagen: ' + error.message, 'error');
+    });
   }
 }
 

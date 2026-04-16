@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Berichte - Bürgerhalle</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <header>
+        <nav id="main-nav">
+            <div class="nav-container">
+                <h1>Bürgerhalle Verwaltung</h1>
+                <ul>
+                    <li><a href="index.html">Dashboard</a></li>
+                    <li><a href="addresses.html">Adressen</a></li>
+                    <li><a href="articles.html">Artikel</a></li>
+                    <li><a href="calendar.html">Kalender</a></li>
+                    <li><a href="bookings.html">Buchungen</a></li>
+                    <li><a href="documents.html">Dokumente</a></li>
+                    <li><a href="invoices.html">Rechnungen</a></li>
+                    <li><a href="cashbook.html">Kassenbuch</a></li>
+                    <li><a href="templates.html">Templates</a></li>
+                    <li><a href="workflows.html">Workflows</a></li>
+                    <li><a href="archive.html">Archiv</a></li>
+                    <li><a href="reports.html" class="active">Berichte</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <h2>Berichte & Exporte</h2>
+
+            <div class="reports-section">
+                <h3>Kassenbuch-Export</h3>
+                <div class="form-group">
+                    <label for="cashbook-start">Von:</label>
+                    <input type="date" id="cashbook-start" value="2026-01-01">
+                    <label for="cashbook-end">Bis:</label>
+                    <input type="date" id="cashbook-end" value="2026-12-31">
+                </div>
+                <div class="actions-bar">
+                    <button id="export-cashbook-btn" class="btn btn-primary">Als CSV exportieren</button>
+                    <button id="export-cashbook-pdf-btn" class="btn btn-primary">Als PDF exportieren</button>
+                </div>
+            </div>
+
+            <div class="reports-section">
+                <h3>Rechnungen exportieren</h3>
+                <div class="form-group">
+                    <label for="invoices-start">Von:</label>
+                    <input type="date" id="invoices-start" value="2026-01-01">
+                    <label for="invoices-end">Bis:</label>
+                    <input type="date" id="invoices-end" value="2026-12-31">
+                </div>
+                <div class="actions-bar">
+                    <button id="export-invoices-btn" class="btn btn-primary">Rechnungen exportieren</button>
+                </div>
+            </div>
+
+            <div class="reports-section">
+                <h3>Verträge exportieren</h3>
+                <div class="form-group">
+                    <label for="contracts-start">Von:</label>
+                    <input type="date" id="contracts-start" value="2026-01-01">
+                    <label for="contracts-end">Bis:</label>
+                    <input type="date" id="contracts-end" value="2026-12-31">
+                </div>
+                <div class="actions-bar">
+                    <button id="export-contracts-btn" class="btn btn-primary">Verträge exportieren</button>
+                </div>
+            </div>
+
+            <div class="reports-section">
+                <h3>Jahresbericht</h3>
+                <div class="form-group">
+                    <label for="yearly-year">Jahr:</label>
+                    <input type="number" id="yearly-year" value="2026" min="2020" max="2030">
+                </div>
+                <div class="actions-bar">
+                    <button id="generate-yearly-btn" class="btn btn-primary">Jahresbericht erstellen</button>
+                </div>
+            </div>
+
+            <div class="reports-section">
+                <h3>Datensicherung</h3>
+                <div class="actions-bar">
+                    <button id="backup-btn" class="btn btn-primary">Daten sichern</button>
+                    <button id="restore-btn" class="btn btn-warning">Daten wiederherstellen</button>
+                </div>
+                <p><strong>Wichtig:</strong> Bei der Wiederherstellung werden alle aktuellen Daten überschrieben!</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/storage.js"></script>
+    <script src="js/services/report.js"></script>
+    <script src="js/controllers/report-controller.js"></script>
+</body>
+</html>
