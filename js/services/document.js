@@ -184,6 +184,7 @@ class DocumentService {
    */
   static buildItemsFromBooking(booking) {
     const items = [];
+    const additionalItems = Array.isArray(booking.additionalItems) ? booking.additionalItems : [];
 
     // Paket als erste Position
     const packageArticle = storage.getArticleById(booking.packageId);
@@ -197,7 +198,7 @@ class DocumentService {
     }
 
     // Zusatzartikel
-    for (const addItem of booking.additionalItems) {
+    for (const addItem of additionalItems) {
       const article = storage.getArticleById(addItem.itemId);
       if (article) {
         items.push({

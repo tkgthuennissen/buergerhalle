@@ -306,6 +306,7 @@ class BookingFormController {
       const contract = DocumentService.createContractFromBooking(this.editingBookingId);
       DocumentService.save(contract);
       App.showNotification('Vertrag erstellt', 'success');
+      window.location.href = '/buergerhalle/pages/documents.html';
     } catch (error) {
       App.showNotification('Fehler: ' + error.message, 'error');
     }
@@ -326,6 +327,7 @@ class BookingFormController {
       const invoice = DocumentService.createInvoiceFromBooking(this.editingBookingId, 'bank_transfer');
       DocumentService.save(invoice);
       App.showNotification('Rechnung erstellt', 'success');
+      window.location.href = '/buergerhalle/pages/documents.html';
     } catch (error) {
       App.showNotification('Fehler: ' + error.message, 'error');
     }
