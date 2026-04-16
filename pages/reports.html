@@ -99,12 +99,12 @@
                                 <input type="date" id="end-date">
                             </div>
 
-                            <button onclick="reportsController.generateReport()">📊 Generieren</button>
+                            <button onclick="ReportController.generateReport()">📊 Generieren</button>
                         </div>
 
                         <div class="report-actions">
-                            <button onclick="reportsController.exportReport()" title="Bericht exportieren">💾 Export</button>
-                            <button onclick="reportsController.printReport()" title="Bericht drucken">🖨️ Drucken</button>
+                            <button onclick="ReportController.exportReport()" title="Bericht exportieren">💾 Export</button>
+                            <button onclick="ReportController.printReport()" title="Bericht drucken">🖨️ Drucken</button>
                         </div>
                     </div>
 
@@ -120,6 +120,6 @@
     <script src="js/storage.js"></script>
     <script src="js/services/report.js"></script>
     <script src="js/services/pdf-export.js"></script>
-    <script src="js/controllers/reports-controller.js"></script>
+    <script src="js/controllers/report-controller.js"></script>
 </body>
 </html>
