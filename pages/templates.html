@@ -10,129 +10,169 @@
     <link rel="stylesheet" href="css/templates.css">
 </head>
 <body>
-    <header>
-        <nav id="main-nav">
-            <div class="nav-container">
-                <h1>Bürgerhalle Verwaltung</h1>
-                <ul>
-                    <li><a href="index.html">Dashboard</a></li>
-                    <li><a href="addresses.html">Adressen</a></li>
-                    <li><a href="articles.html">Artikel</a></li>
-                    <li><a href="calendar.html">Kalender</a></li>
-                    <li><a href="bookings.html">Buchungen</a></li>
-                    <li><a href="documents.html">Dokumente</a></li>
-                    <li><a href="invoices.html">Rechnungen</a></li>
-                    <li><a href="cashbook.html">Kassenbuch</a></li>
-                    <li><a href="templates.html" class="active">Templates</a></li>
-                    <li><a href="workflows.html">Workflows</a></li>
-                    <li><a href="archive.html">Archiv</a></li>
-                    <li><a href="reports.html">Berichte</a></li>
-                    <li><a href="workflows.html">Workflows</a></li>
-                    <li><a href="archive.html">Archiv</a></li>
-                    <li><a href="reports.html">Berichte</a></li>
-                </ul>
-            </div>
-        </nav>
+    <!-- ========== HEADER ========== -->
+    <header class="app-header">
+        <a href="index.html" style="text-decoration:none;color:inherit;"><h1>🏛️ Bürgerhalle-Verwaltung</h1></a>
+        <div class="app-header-actions">
+            <button onclick="App.exportData()" title="Daten exportieren">💾 Export</button>
+            <button onclick="App.importData()" title="Daten importieren">📂 Import</button>
+            <button onclick="storage.reset()" title="Zurücksetzen">🔄 Reset</button>
+        </div>
     </header>
 
-    <main>
-        <div class="container">
-            <h2>Dokumenten-Templates</h2>
-
-            <div class="actions-bar">
-                <button id="create-template-btn" class="btn btn-primary">Neues Template</button>
+    <!-- ========== MAIN CONTAINER ========== -->
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <aside class="app-sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Stammdaten</div>
+                <ul class="sidebar-menu">
+                    <li><a href="addresses.html" data-nav-link="addresses">📍 Adressen</a></li>
+                    <li><a href="articles.html" data-nav-link="articles">📦 Artikel</a></li>
+                </ul>
             </div>
 
-            <div id="template-form" class="form-container" style="display: none;">
-                <h3>Template bearbeiten</h3>
-                <form id="template-edit-form">
-                    <input type="hidden" id="template-id">
-
-                    <div class="form-group">
-                        <label for="template-name">Name:</label>
-                        <input type="text" id="template-name" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="template-type">Typ:</label>
-                        <select id="template-type" required>
-                            <option value="contract">Vertrag</option>
-                            <option value="invoice">Rechnung</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="template-header">Kopfzeile:</label>
-                        <textarea id="template-header" rows="3" placeholder="z.B. Bürgerhalle Musterstadt&#10;Vertrag Nr. {{Dokument.Nummer}}"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="template-body">Haupttext:</label>
-                        <textarea id="template-body" rows="10" placeholder="Vertragstext mit Platzhaltern wie {{Adresse.Name}}"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="template-footer">Fußzeile:</label>
-                        <textarea id="template-footer" rows="3" placeholder="z.B. Unterschrift: ____________________&#10;Datum: {{Dokument.Datum}}"></textarea>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="button" id="save-template-btn" class="btn btn-primary">Speichern</button>
-                        <button type="button" id="cancel-template-btn" class="btn btn-secondary">Abbrechen</button>
-                    </div>
-                </form>
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Buchungen</div>
+                <ul class="sidebar-menu">
+                    <li><a href="calendar.html" data-nav-link="calendar">📅 Buchungskalender</a></li>
+                    <li><a href="bookings.html" data-nav-link="bookings">📋 Übersicht</a></li>
+                    <li><a href="booking-form.html" data-nav-link="booking-form">➕ Neue Buchung</a></li>
+                </ul>
             </div>
 
-            <div class="placeholders-info">
-                <h3>Verfügbare Platzhalter</h3>
-                <div class="placeholders-grid">
-                    <div>
-                        <h4>Dokument</h4>
-                        <ul>
-                            <li>{{Dokument.Nummer}}</li>
-                            <li>{{Dokument.Datum}}</li>
-                            <li>{{Dokument.Total}}</li>
-                            <li>{{Dokument.Subtotal}}</li>
-                            <li>{{Dokument.Steuer}}</li>
-                            <li>{{Dokument.Positionen}}</li>
-                        </ul>
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Dokumente</div>
+                <ul class="sidebar-menu">
+                    <li><a href="documents.html" data-nav-link="documents">📄 Verträge &amp; Rechnungen</a></li>
+                    <li><a href="invoices.html" data-nav-link="invoices">💰 Manuelle Rechnungen</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Finanzierung</div>
+                <ul class="sidebar-menu">
+                    <li><a href="cashbook.html" data-nav-link="cashbook">💳 Kassenbuch</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">ERP-System</div>
+                <ul class="sidebar-menu">
+                    <li><a href="templates.html" data-nav-link="templates">📝 Templates</a></li>
+                    <li><a href="workflows.html" data-nav-link="workflows">🔄 Workflows</a></li>
+                    <li><a href="archive.html" data-nav-link="archive">📦 Archiv</a></li>
+                    <li><a href="reports.html" data-nav-link="reports">📊 Berichte</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- CONTENT -->
+        <main class="app-content">
+            <div class="content-header">
+                <h1>📝 Dokumenten-Templates</h1>
+            </div>
+
+            <div class="content-body">
+                <div class="page-section">
+                    <div class="actions-bar">
+                        <button id="create-template-btn" class="btn btn-primary">Neues Template</button>
                     </div>
-                    <div>
-                        <h4>Adresse</h4>
-                        <ul>
-                            <li>{{Adresse.Name}}</li>
-                            <li>{{Adresse.Strasse}}</li>
-                            <li>{{Adresse.PLZ}}</li>
-                            <li>{{Adresse.Stadt}}</li>
-                            <li>{{Adresse.Telefon}}</li>
-                            <li>{{Adresse.Email}}</li>
-                        </ul>
+
+                    <div id="template-form" class="form-container" style="display: none;">
+                        <h3>Template bearbeiten</h3>
+                        <form id="template-edit-form">
+                            <input type="hidden" id="template-id">
+
+                            <div class="form-group">
+                                <label for="template-name">Name:</label>
+                                <input type="text" id="template-name" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="template-type">Typ:</label>
+                                <select id="template-type" required>
+                                    <option value="contract">Vertrag</option>
+                                    <option value="invoice">Rechnung</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="template-header">Kopfzeile:</label>
+                                <textarea id="template-header" rows="3" placeholder="z.B. Bürgerhalle Musterstadt&#10;Vertrag Nr. {{Dokument.Nummer}}"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="template-body">Haupttext:</label>
+                                <textarea id="template-body" rows="10" placeholder="Vertragstext mit Platzhaltern wie {{Adresse.Name}}"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="template-footer">Fußzeile:</label>
+                                <textarea id="template-footer" rows="3" placeholder="z.B. Unterschrift: ____________________&#10;Datum: {{Dokument.Datum}}"></textarea>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" id="save-template-btn" class="btn btn-primary">Speichern</button>
+                                <button type="button" id="cancel-template-btn" class="btn btn-secondary">Abbrechen</button>
+                            </div>
+                        </form>
                     </div>
-                    <div>
-                        <h4>Buchung</h4>
-                        <ul>
-                            <li>{{Buchung.Zeitraum}}</li>
-                            <li>{{Buchung.Datum}}</li>
-                        </ul>
+
+                    <div class="placeholders-info">
+                        <h3>Verfügbare Platzhalter</h3>
+                        <div class="placeholders-grid">
+                            <div>
+                                <h4>Dokument</h4>
+                                <ul>
+                                    <li>{{Dokument.Nummer}}</li>
+                                    <li>{{Dokument.Datum}}</li>
+                                    <li>{{Dokument.Total}}</li>
+                                    <li>{{Dokument.Subtotal}}</li>
+                                    <li>{{Dokument.Steuer}}</li>
+                                    <li>{{Dokument.Positionen}}</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4>Adresse</h4>
+                                <ul>
+                                    <li>{{Adresse.Name}}</li>
+                                    <li>{{Adresse.Strasse}}</li>
+                                    <li>{{Adresse.PLZ}}</li>
+                                    <li>{{Adresse.Stadt}}</li>
+                                    <li>{{Adresse.Telefon}}</li>
+                                    <li>{{Adresse.Email}}</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4>Buchung</h4>
+                                <ul>
+                                    <li>{{Buchung.Zeitraum}}</li>
+                                    <li>{{Buchung.Datum}}</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4>Artikel</h4>
+                                <ul>
+                                    <li>{{Artikel.Name}}</li>
+                                    <li>{{Artikel.Preis}}</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <h4>Artikel</h4>
-                        <ul>
-                            <li>{{Artikel.Name}}</li>
-                            <li>{{Artikel.Preis}}</li>
-                        </ul>
+
+                    <div id="templates-list" class="templates-list">
+                        <!-- Templates werden hier geladen -->
                     </div>
                 </div>
             </div>
+        </main>
+    </div>
 
-            <div id="templates-list" class="templates-list">
-                <!-- Templates werden hier geladen -->
-            </div>
-        </div>
-    </main>
-
+    <script src="js/html2pdf.js"></script>
     <script src="js/storage.js"></script>
     <script src="js/services/template.js"></script>
+    <script src="js/services/pdf-export.js"></script>
     <script src="js/controllers/template-controller.js"></script>
 </body>
 </html>

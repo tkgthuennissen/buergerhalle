@@ -9,58 +9,117 @@
     <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
-    <header>
-        <nav id="main-nav">
-            <div class="nav-container">
-                <h1>Bürgerhalle Verwaltung</h1>
-                <ul>
-                    <li><a href="index.html">Dashboard</a></li>
-                    <li><a href="addresses.html">Adressen</a></li>
-                    <li><a href="articles.html">Artikel</a></li>
-                    <li><a href="calendar.html">Kalender</a></li>
-                    <li><a href="bookings.html">Buchungen</a></li>
-                    <li><a href="documents.html">Dokumente</a></li>
-                    <li><a href="invoices.html">Rechnungen</a></li>
-                    <li><a href="cashbook.html">Kassenbuch</a></li>
-                    <li><a href="templates.html">Templates</a></li>
-                    <li><a href="workflows.html">Workflows</a></li>
-                    <li><a href="archive.html" class="active">Archiv</a></li>
-                    <li><a href="reports.html">Berichte</a></li>
-                    <li><a href="reports.html">Berichte</a></li>
-                </ul>
-            </div>
-        </nav>
+    <!-- ========== HEADER ========== -->
+    <header class="app-header">
+        <a href="index.html" style="text-decoration:none;color:inherit;"><h1>🏛️ Bürgerhalle-Verwaltung</h1></a>
+        <div class="app-header-actions">
+            <button onclick="App.exportData()" title="Daten exportieren">💾 Export</button>
+            <button onclick="App.importData()" title="Daten importieren">📂 Import</button>
+            <button onclick="storage.reset()" title="Zurücksetzen">🔄 Reset</button>
+        </div>
     </header>
 
-    <main>
-        <div class="container">
-            <h2>Archiv & Lösch-Management</h2>
-
-            <div class="archive-info">
-                <h3>DSGVO & GoBD konforme Archivierung</h3>
-                <div class="retention-info">
-                    <h4>Aufbewahrungsfristen</h4>
-                    <ul>
-                        <li><strong>Rechnungen:</strong> 10 Jahre (GoBD)</li>
-                        <li><strong>Verträge:</strong> 6-10 Jahre (konfigurierbar)</li>
-                        <li><strong>Adressen:</strong> 3 Jahre nach letzter Aktivität (DSGVO)</li>
-                    </ul>
-                </div>
-
-                <div class="actions-bar">
-                    <label>
-                        <input type="checkbox" id="filter-archived"> Archivierte Einträge anzeigen
-                    </label>
-                    <button id="check-retention-btn" class="btn btn-warning">Aufbewahrungsfristen prüfen</button>
-                </div>
+    <!-- ========== MAIN CONTAINER ========== -->
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <aside class="app-sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Stammdaten</div>
+                <ul class="sidebar-menu">
+                    <li><a href="addresses.html" data-nav-link="addresses">📍 Adressen</a></li>
+                    <li><a href="articles.html" data-nav-link="articles">📦 Artikel</a></li>
+                </ul>
             </div>
 
-            <div id="archive-list" class="archive-list">
-                <!-- Archiv-Einträge werden hier geladen -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Buchungen</div>
+                <ul class="sidebar-menu">
+                    <li><a href="calendar.html" data-nav-link="calendar">📅 Buchungskalender</a></li>
+                    <li><a href="bookings.html" data-nav-link="bookings">📋 Übersicht</a></li>
+                    <li><a href="booking-form.html" data-nav-link="booking-form">➕ Neue Buchung</a></li>
+                </ul>
             </div>
-        </div>
-    </main>
 
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Dokumente</div>
+                <ul class="sidebar-menu">
+                    <li><a href="documents.html" data-nav-link="documents">📄 Verträge &amp; Rechnungen</a></li>
+                    <li><a href="invoices.html" data-nav-link="invoices">💰 Manuelle Rechnungen</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Finanzierung</div>
+                <ul class="sidebar-menu">
+                    <li><a href="cashbook.html" data-nav-link="cashbook">💳 Kassenbuch</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">ERP-System</div>
+                <ul class="sidebar-menu">
+                    <li><a href="templates.html" data-nav-link="templates">📝 Templates</a></li>
+                    <li><a href="workflows.html" data-nav-link="workflows">🔄 Workflows</a></li>
+                    <li><a href="archive.html" data-nav-link="archive">📦 Archiv</a></li>
+                    <li><a href="reports.html" data-nav-link="reports">📊 Berichte</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- CONTENT -->
+        <main class="app-content">
+            <div class="content-header">
+                <h1>📦 Dokumenten-Archiv</h1>
+            </div>
+
+            <div class="content-body">
+                <div class="page-section">
+                    <div class="archive-info">
+                        <h3>DSGVO & GoBD konforme Archivierung</h3>
+                        <div class="retention-info">
+                            <h4>Aufbewahrungsfristen</h4>
+                            <ul>
+                                <li><strong>Rechnungen:</strong> 10 Jahre (GoBD)</li>
+                                <li><strong>Verträge:</strong> 6-10 Jahre (konfigurierbar)</li>
+                                <li><strong>Adressen:</strong> 3 Jahre nach letzter Aktivität (DSGVO)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="archive-controls">
+                        <div class="filter-controls">
+                            <label for="archive-type">Typ:</label>
+                            <select id="archive-type">
+                                <option value="">Alle</option>
+                                <option value="contract">Verträge</option>
+                                <option value="invoice">Rechnungen</option>
+                                <option value="receipt">Belege</option>
+                            </select>
+
+                            <label for="archive-year">Jahr:</label>
+                            <select id="archive-year">
+                                <option value="">Alle</option>
+                                <!-- Jahre werden dynamisch geladen -->
+                            </select>
+
+                            <button onclick="archiveController.filterArchive()">🔍 Filtern</button>
+                        </div>
+
+                        <div class="archive-actions">
+                            <button onclick="archiveController.exportArchive()" title="Archiv exportieren">💾 Export</button>
+                            <button onclick="archiveController.cleanupArchive()" title="Alte Einträge löschen">🗑️ Aufräumen</button>
+                        </div>
+                    </div>
+
+                    <div id="archive-list" class="archive-list">
+                        <!-- Archiv-Einträge werden hier geladen -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/html2pdf.js"></script>
     <script src="js/storage.js"></script>
     <script src="js/services/archive.js"></script>
     <script src="js/controllers/archive-controller.js"></script>

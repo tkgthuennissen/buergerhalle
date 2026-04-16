@@ -9,96 +9,117 @@
     <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
-    <header>
-        <nav id="main-nav">
-            <div class="nav-container">
-                <h1>Bürgerhalle Verwaltung</h1>
-                <ul>
-                    <li><a href="index.html">Dashboard</a></li>
-                    <li><a href="addresses.html">Adressen</a></li>
-                    <li><a href="articles.html">Artikel</a></li>
-                    <li><a href="calendar.html">Kalender</a></li>
-                    <li><a href="bookings.html">Buchungen</a></li>
-                    <li><a href="documents.html">Dokumente</a></li>
-                    <li><a href="invoices.html">Rechnungen</a></li>
-                    <li><a href="cashbook.html">Kassenbuch</a></li>
-                    <li><a href="templates.html">Templates</a></li>
-                    <li><a href="workflows.html">Workflows</a></li>
-                    <li><a href="archive.html">Archiv</a></li>
-                    <li><a href="reports.html" class="active">Berichte</a></li>
-                </ul>
-            </div>
-        </nav>
+    <!-- ========== HEADER ========== -->
+    <header class="app-header">
+        <a href="index.html" style="text-decoration:none;color:inherit;"><h1>🏛️ Bürgerhalle-Verwaltung</h1></a>
+        <div class="app-header-actions">
+            <button onclick="App.exportData()" title="Daten exportieren">💾 Export</button>
+            <button onclick="App.importData()" title="Daten importieren">📂 Import</button>
+            <button onclick="storage.reset()" title="Zurücksetzen">🔄 Reset</button>
+        </div>
     </header>
 
-    <main>
-        <div class="container">
-            <h2>Berichte & Exporte</h2>
-
-            <div class="reports-section">
-                <h3>Kassenbuch-Export</h3>
-                <div class="form-group">
-                    <label for="cashbook-start">Von:</label>
-                    <input type="date" id="cashbook-start" value="2026-01-01">
-                    <label for="cashbook-end">Bis:</label>
-                    <input type="date" id="cashbook-end" value="2026-12-31">
-                </div>
-                <div class="actions-bar">
-                    <button id="export-cashbook-btn" class="btn btn-primary">Als CSV exportieren</button>
-                    <button id="export-cashbook-pdf-btn" class="btn btn-primary">Als PDF exportieren</button>
-                </div>
+    <!-- ========== MAIN CONTAINER ========== -->
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <aside class="app-sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Stammdaten</div>
+                <ul class="sidebar-menu">
+                    <li><a href="addresses.html" data-nav-link="addresses">📍 Adressen</a></li>
+                    <li><a href="articles.html" data-nav-link="articles">📦 Artikel</a></li>
+                </ul>
             </div>
 
-            <div class="reports-section">
-                <h3>Rechnungen exportieren</h3>
-                <div class="form-group">
-                    <label for="invoices-start">Von:</label>
-                    <input type="date" id="invoices-start" value="2026-01-01">
-                    <label for="invoices-end">Bis:</label>
-                    <input type="date" id="invoices-end" value="2026-12-31">
-                </div>
-                <div class="actions-bar">
-                    <button id="export-invoices-btn" class="btn btn-primary">Rechnungen exportieren</button>
-                </div>
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Buchungen</div>
+                <ul class="sidebar-menu">
+                    <li><a href="calendar.html" data-nav-link="calendar">📅 Buchungskalender</a></li>
+                    <li><a href="bookings.html" data-nav-link="bookings">📋 Übersicht</a></li>
+                    <li><a href="booking-form.html" data-nav-link="booking-form">➕ Neue Buchung</a></li>
+                </ul>
             </div>
 
-            <div class="reports-section">
-                <h3>Verträge exportieren</h3>
-                <div class="form-group">
-                    <label for="contracts-start">Von:</label>
-                    <input type="date" id="contracts-start" value="2026-01-01">
-                    <label for="contracts-end">Bis:</label>
-                    <input type="date" id="contracts-end" value="2026-12-31">
-                </div>
-                <div class="actions-bar">
-                    <button id="export-contracts-btn" class="btn btn-primary">Verträge exportieren</button>
-                </div>
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Dokumente</div>
+                <ul class="sidebar-menu">
+                    <li><a href="documents.html" data-nav-link="documents">📄 Verträge &amp; Rechnungen</a></li>
+                    <li><a href="invoices.html" data-nav-link="invoices">💰 Manuelle Rechnungen</a></li>
+                </ul>
             </div>
 
-            <div class="reports-section">
-                <h3>Jahresbericht</h3>
-                <div class="form-group">
-                    <label for="yearly-year">Jahr:</label>
-                    <input type="number" id="yearly-year" value="2026" min="2020" max="2030">
-                </div>
-                <div class="actions-bar">
-                    <button id="generate-yearly-btn" class="btn btn-primary">Jahresbericht erstellen</button>
-                </div>
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Finanzierung</div>
+                <ul class="sidebar-menu">
+                    <li><a href="cashbook.html" data-nav-link="cashbook">💳 Kassenbuch</a></li>
+                </ul>
             </div>
 
-            <div class="reports-section">
-                <h3>Datensicherung</h3>
-                <div class="actions-bar">
-                    <button id="backup-btn" class="btn btn-primary">Daten sichern</button>
-                    <button id="restore-btn" class="btn btn-warning">Daten wiederherstellen</button>
-                </div>
-                <p><strong>Wichtig:</strong> Bei der Wiederherstellung werden alle aktuellen Daten überschrieben!</p>
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">ERP-System</div>
+                <ul class="sidebar-menu">
+                    <li><a href="templates.html" data-nav-link="templates">📝 Templates</a></li>
+                    <li><a href="workflows.html" data-nav-link="workflows">🔄 Workflows</a></li>
+                    <li><a href="archive.html" data-nav-link="archive">📦 Archiv</a></li>
+                    <li><a href="reports.html" data-nav-link="reports">📊 Berichte</a></li>
+                </ul>
             </div>
-        </div>
-    </main>
+        </aside>
 
+        <!-- CONTENT -->
+        <main class="app-content">
+            <div class="content-header">
+                <h1>📊 Berichte & Analysen</h1>
+            </div>
+
+            <div class="content-body">
+                <div class="page-section">
+                    <div class="reports-controls">
+                        <div class="report-filters">
+                            <label for="report-type">Berichtstyp:</label>
+                            <select id="report-type">
+                                <option value="financial">Finanzbericht</option>
+                                <option value="booking">Buchungsstatistik</option>
+                                <option value="archive">Archiv-Status</option>
+                                <option value="compliance">Compliance-Bericht</option>
+                            </select>
+
+                            <label for="report-period">Zeitraum:</label>
+                            <select id="report-period">
+                                <option value="month">Aktueller Monat</option>
+                                <option value="quarter">Aktuelles Quartal</option>
+                                <option value="year">Aktuelles Jahr</option>
+                                <option value="custom">Benutzerdefiniert</option>
+                            </select>
+
+                            <div id="custom-period" style="display:none;">
+                                <label for="start-date">Von:</label>
+                                <input type="date" id="start-date">
+                                <label for="end-date">Bis:</label>
+                                <input type="date" id="end-date">
+                            </div>
+
+                            <button onclick="reportsController.generateReport()">📊 Generieren</button>
+                        </div>
+
+                        <div class="report-actions">
+                            <button onclick="reportsController.exportReport()" title="Bericht exportieren">💾 Export</button>
+                            <button onclick="reportsController.printReport()" title="Bericht drucken">🖨️ Drucken</button>
+                        </div>
+                    </div>
+
+                    <div id="report-content" class="report-content">
+                        <!-- Berichte werden hier angezeigt -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/html2pdf.js"></script>
     <script src="js/storage.js"></script>
     <script src="js/services/report.js"></script>
-    <script src="js/controllers/report-controller.js"></script>
+    <script src="js/services/pdf-export.js"></script>
+    <script src="js/controllers/reports-controller.js"></script>
 </body>
 </html>
