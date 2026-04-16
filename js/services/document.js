@@ -35,7 +35,7 @@ class DocumentService {
       total: subtotal,
       paymentMethod: null,
       status: 'created', // "created" | "sent" | "paid" | "cancelled"
-      templateId: 'tmpl_contract_1',
+      templateId: TemplateService.getDefaultTemplateId('contract'),
       notes: '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -71,7 +71,7 @@ class DocumentService {
       total: subtotal,
       paymentMethod, // "bank_transfer" | "cash"
       status: 'created',
-      templateId: 'tmpl_invoice_1',
+      templateId: TemplateService.getDefaultTemplateId('invoice'),
       notes: '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()

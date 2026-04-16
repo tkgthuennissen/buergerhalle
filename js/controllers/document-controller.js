@@ -119,7 +119,7 @@ class DocumentController {
     const title = isInvoice ? `Rechnung ${doc.documentNumber}` : `Vertrag ${doc.documentNumber}`;
 
     const templateData = PdfExportService.prepareDocumentData(doc);
-    const fallbackTemplateId = doc.type === 'contract' ? 'tmpl_contract_1' : 'tmpl_invoice_1';
+    const fallbackTemplateId = TemplateService.getDefaultTemplateId(doc.type);
     const templateId = (doc.templateId && TemplateService.getById(doc.templateId)) ? doc.templateId : fallbackTemplateId;
     const renderedTemplate = TemplateService.render(templateId, templateData) || { header: '', body: '', footer: '' };
     const templateHeaderHtml = renderedTemplate.header ? `<div class="document-template-section document-template-header">${renderedTemplate.header.replace(/\n/g, '<br>')}</div>` : '<div class="document-template-section document-template-header"><em>Kein Vertragskopf verfügbar</em></div>';

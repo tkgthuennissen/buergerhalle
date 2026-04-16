@@ -99,7 +99,8 @@ class PdfExportService {
    */
   static generateDocumentHTML(document) {
     // Template laden und rendern
-    const rendered = TemplateService.render(document.templateId, this.prepareDocumentData(document));
+    const templateId = TemplateService.getDefaultTemplateId(document.type);
+    const rendered = TemplateService.render(document.templateId || templateId, this.prepareDocumentData(document));
 
     return `
       <div style="font-family: Arial, sans-serif; max-width: 210mm; min-height: 297mm; margin: 0 auto; padding: 20mm; box-sizing: border-box; background: white; color: #111;">
