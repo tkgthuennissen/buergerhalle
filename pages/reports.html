@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Berichte - Bürgerhalle</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
 </head>
 <body>
     <!-- ========== HEADER ========== -->
     <header class="app-header">
-        <a href="index.html" style="text-decoration:none;color:inherit;"><h1>🏛️ Bürgerhalle-Verwaltung</h1></a>
+        <a href="../index.html" style="text-decoration:none;color:inherit;"><h1>🏛️ Bürgerhalle-Verwaltung</h1></a>
         <div class="app-header-actions">
             <button onclick="App.exportData()" title="Daten exportieren">💾 Export</button>
             <button onclick="App.importData()" title="Daten importieren">📂 Import</button>
@@ -116,10 +116,11 @@
         </main>
     </div>
 
-    <script src="js/html2pdf.js"></script>
-    <script src="js/storage.js"></script>
-    <script src="js/services/report.js"></script>
-    <script src="js/services/pdf-export.js"></script>
-    <script src="js/controllers/report-controller.js"></script>
+    <script src="../js/html2pdf.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="../js/services/report.js"></script>
+    <script src="../js/services/pdf-export.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/controllers/report-controller.js"></script>
 </body>
 </html>
