@@ -102,14 +102,25 @@ class PdfExportService {
     const rendered = TemplateService.render(document.templateId, this.prepareDocumentData(document));
 
     return `
-      <div style="font-family: Arial, sans-serif; max-width: 210mm; margin: 0 auto; padding: 20mm; box-sizing: border-box;">
-        <div style="margin-bottom: 20mm; white-space: pre-line;">${rendered.header}</div>
-
-        <div style="margin-bottom: 20mm; white-space: pre-line; line-height: 1.5;">${rendered.body}</div>
-
-        <div style="margin-top: 40mm; white-space: pre-line;">${rendered.footer}</div>
-
-        <div style="margin-top: 20mm; font-size: 10pt; color: #666;">
+      <div style="font-family: Arial, sans-serif; max-width: 210mm; min-height: 297mm; margin: 0 auto; padding: 20mm; box-sizing: border-box; background: white; color: #111;">
+        <style>
+          @page { size: A4; margin: 20mm; }
+          body { margin: 0; }
+          .pdf-header { margin-bottom: 20mm; white-space: pre-line; font-size: 12pt; line-height: 1.5; }
+          .pdf-body { margin-bottom: 20mm; white-space: pre-line; font-size: 11pt; line-height: 1.6; }
+          .pdf-footer { margin-top: 20mm; white-space: pre-line; font-size: 11pt; line-height: 1.6; }
+          .pdf-meta { margin-bottom: 10mm; font-size: 10pt; }
+          .pdf-meta div { margin-bottom: 0.4rem; }
+        </style>
+        <div class="pdf-header">${rendered.header}</div>
+        <div class="pdf-meta">
+          <div><strong>Kunde:</strong> ${templateData.Adresse.Name || '—'}</div>
+          <div><strong>Datum:</strong> ${templateData.Dokument.Datum || '—'}</div>
+          <div><strong>Veranstaltungsdatum:</strong> ${templateData.Buchung.Datum || '—'}</div>
+        </div>
+        <div class="pdf-body">${rendered.body}</div>
+        <div class="pdf-footer">${rendered.footer}</div>
+        <div style="margin-top: 15mm; font-size: 10pt; color: #666;">
           Status: ${document.status} | Erzeugt am: ${new Date().toLocaleString('de-DE')}
         </div>
       </div>

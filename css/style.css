@@ -481,3 +481,24 @@ td {
     min-width: 100%;
   }
 }
+
+.document-template-section {
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid var(--border-gray);
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.document-template-header {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.document-template-body {
+  font-size: 0.95rem;
+}
+
+.document-template-footer {
+  font-size: 0.95rem;
+  border-bottom: none;
+}
