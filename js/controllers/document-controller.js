@@ -118,6 +118,13 @@ class DocumentController {
     const isInvoice = doc.type === 'invoice';
     const title = isInvoice ? `Rechnung ${doc.documentNumber}` : `Vertrag ${doc.documentNumber}`;
 
+    const templateData = PdfExportService.prepareDocumentData(doc);
+    const templateId = doc.templateId || (doc.type === 'contract' ? 'tmpl_contract_1' : 'tmpl_invoice_1');
+    const renderedTemplate = TemplateService.render(templateId, templateData) || { header: '', body: '', footer: '' };
+    const templateHeaderHtml = renderedTemplate.header ? `<div class="document-template-section document-template-header">${renderedTemplate.header.replace(/\n/g, '<br>')}</div>` : '';
+    const templateBodyHtml = renderedTemplate.body ? `<div class="document-template-section document-template-body">${renderedTemplate.body.replace(/\n/g, '<br>')}</div>` : '';
+    const templateFooterHtml = renderedTemplate.footer ? `<div class="document-template-section document-template-footer">${renderedTemplate.footer.replace(/\n/g, '<br>')}</div>` : '';
+
     const itemsHtml = doc.items.map(item => `
       <tr>
         <td>${item.description}</td>
@@ -190,6 +197,11 @@ class DocumentController {
           </div>
         </div>
 
+        <div class="document-template-content">
+          ${templateHeaderHtml}
+          ${templateBodyHtml}
+        </div>
+
         <div class="document-items">
           <h3>Positionen</h3>
           <table class="data-table">
@@ -206,6 +218,8 @@ class DocumentController {
             </tbody>
           </table>
         </div>
+
+        ${templateFooterHtml}
 
         <div class="document-summary">
           <div class="row">
