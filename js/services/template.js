@@ -168,4 +168,37 @@ class TemplateService {
   static delete(id) {
     storage.deleteTemplate(id);
   }
+
+  /**
+   * Gibt die neueste Template-ID eines Typs zurück.
+   * @param {string} type - 'contract' oder 'invoice'
+   * @return {string|null}
+   */
+  static getLatestTemplateId(type) {
+    const templates = this.getByType(type);
+    if (!templates || templates.length === 0) return null;
+
+    let latest = templates[0];
+    for (let i = 1; i < templates.length; i++) {
+      if (new Date(templates[i].createdAt) > new Date(latest.createdAt)) {
+        latest = templates[i];
+      }
+    }
+    return latest.id;
+  }
+
+  /**
+   * Gibt eine gültige Template-ID zurück oder eine Standard-ID, wenn keine Vorlage vorhanden ist.
+   * @param {string} type
+   * @return {string}
+   */
+  static getDefaultTemplateId(type) {
+    try {
+      const latestTemplateId = this.getLatestTemplateId(type);
+      if (latestTemplateId) return latestTemplateId;
+    } catch (e) {
+      console.warn('Fehler beim Laden der neuesten Template-ID:', e);
+    }
+    return type === 'contract' ? 'tmpl_contract_1' : 'tmpl_invoice_1';
+  }
 }
