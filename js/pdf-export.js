@@ -103,13 +103,16 @@ class PdfExportService {
    * @return {string} HTML-String
    */
   static generateDocumentHTML(document) {
+    // Prepare template data first
+    const templateData = this.prepareDocumentData(document);
+    
     // Template laden und rendern
     let rendered = null;
     
     if (typeof TemplateService !== 'undefined' && TemplateService.render) {
       try {
         const templateId = document.templateId || (TemplateService.getDefaultTemplateId ? TemplateService.getDefaultTemplateId(document.type) : (document.type === 'contract' ? 'tmpl_contract_1' : 'tmpl_invoice_1'));
-        rendered = TemplateService.render(templateId, this.prepareDocumentData(document));
+        rendered = TemplateService.render(templateId, templateData);
       } catch (e) {
         console.warn('Fehler beim Rendern des Templates:', e);
       }
