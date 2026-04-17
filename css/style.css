@@ -502,3 +502,71 @@ td {
   font-size: 0.95rem;
   border-bottom: none;
 }
+
+/* ============================================================================
+   Akkordion-Styles
+   ============================================================================ */
+
+.accordion-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.accordion-section {
+  border: 1px solid var(--border-gray);
+  border-radius: 6px;
+  background: white;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.accordion-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: var(--light-gray);
+  border-bottom: 1px solid var(--border-gray);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.accordion-header:hover {
+  background: #f1f5f9;
+}
+
+.accordion-header.expanded {
+  background: #eef2ff;
+  border-bottom-color: var(--primary-color);
+}
+
+.accordion-toggle {
+  display: inline-block;
+  font-size: 12px;
+  transition: transform 0.2s ease;
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.accordion-header.expanded .accordion-toggle {
+  transform: rotate(90deg);
+}
+
+.accordion-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--dark-gray);
+}
+
+.accordion-content {
+  padding: var(--spacing-lg);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.accordion-content .data-table {
+  margin-top: 0;
+}

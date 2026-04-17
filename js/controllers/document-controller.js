@@ -26,38 +26,117 @@ class DocumentController {
       return;
     }
 
+    // Gruppiere Verträge nach Buchungsdatum
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const current = [];
+    const completed = [];
+
+    contracts.forEach(doc => {
+      const booking = storage.getBookingById(doc.bookingId);
+      const eventDate = booking ? new Date(booking.eventDate) : null;
+      
+      if (!eventDate || eventDate >= today) {
+        current.push(doc);
+      } else {
+        completed.push(doc);
+      }
+    });
+
+    // Sortiere nach Datum
+    const sortByDate = (a, b) => {
+      const dateA = storage.getBookingById(a.bookingId)?.eventDate || '';
+      const dateB = storage.getBookingById(b.bookingId)?.eventDate || '';
+      return new Date(dateB) - new Date(dateA);
+    };
+    
+    current.sort(sortByDate);
+    completed.sort(sortByDate);
+
+    // Render accordion sections
     container.innerHTML = `
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Nummer</th>
-            <th>Kunde</th>
-            <th>Datum</th>
-            <th>Summe</th>
-            <th>Status</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          ${contracts.map(doc => {
-            const addr = AddressService.getById(doc.addressId);
-            return `
-              <tr>
-                <td><strong>${doc.documentNumber}</strong></td>
-                <td>${addr?.name || '—'}</td>
-                <td>${App.formatDate(doc.documentDate)}</td>
-                <td>${App.formatCurrency(doc.total)}</td>
-                <td><span class="badge badge-${doc.status}">${doc.status}</span></td>
-                <td>
-                  <button class="icon-btn" onclick="DocumentController.viewDocument('${doc.id}')" title="Anzeigen">👁️</button>
-                  <button class="icon-btn danger" onclick="DocumentController.deleteDocument('${doc.id}')" title="Löschen">🗑️</button>
-                </td>
-              </tr>
-            `;
-          }).join('')}
-        </tbody>
-      </table>
+      <div class="accordion-container">
+        ${this.renderContractSection('current-contracts', 'Aktuell', current, true)}
+        ${this.renderContractSection('completed-contracts', 'Abgeschlossen', completed, false)}
+      </div>
     `;
+
+    // Add event listeners for accordion
+    this.setupAccordion();
+  }
+
+  static renderContractSection(id, title, contracts, expanded = true) {
+    if (contracts.length === 0) {
+      return '';
+    }
+
+    const expandedClass = expanded ? 'expanded' : '';
+    const displayStyle = expanded ? 'block' : 'none';
+
+    return `
+      <div class="accordion-section">
+        <div class="accordion-header ${expandedClass}" onclick="DocumentController.toggleAccordion(this)">
+          <span class="accordion-toggle">▶</span>
+          <h3>${title} (${contracts.length})</h3>
+        </div>
+        <div class="accordion-content" style="display: ${displayStyle}">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nummer</th>
+                <th>Kunde</th>
+                <th>Datum</th>
+                <th>Ereignisdatum</th>
+                <th>Summe</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${contracts.map(doc => {
+                const addr = AddressService.getById(doc.addressId);
+                const booking = storage.getBookingById(doc.bookingId);
+                const eventDate = booking ? App.formatDate(booking.eventDate) : '—';
+                return `
+                  <tr>
+                    <td><strong>${doc.documentNumber}</strong></td>
+                    <td>${addr?.name || '—'}</td>
+                    <td>${App.formatDate(doc.documentDate)}</td>
+                    <td>${eventDate}</td>
+                    <td>${App.formatCurrency(doc.total)}</td>
+                    <td><span class="badge badge-${doc.status}">${doc.status}</span></td>
+                    <td>
+                      <button class="icon-btn" onclick="DocumentController.viewDocument('${doc.id}')" title="Anzeigen">👁️</button>
+                      <button class="icon-btn" onclick="DocumentController.exportPDF('${doc.id}')" title="PDF exportieren">📄</button>
+                      <button class="icon-btn danger" onclick="DocumentController.deleteDocument('${doc.id}')" title="Löschen">🗑️</button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  static toggleAccordion(headerElement) {
+    const content = headerElement.nextElementSibling;
+    const isExpanded = headerElement.classList.contains('expanded');
+    
+    if (isExpanded) {
+      headerElement.classList.remove('expanded');
+      content.style.display = 'none';
+    } else {
+      headerElement.classList.add('expanded');
+      content.style.display = 'block';
+    }
+  }
+
+  static setupAccordion() {
+    // Event listeners are set up via onclick attributes
+    // No additional setup needed
   }
 
   static renderInvoices() {
