@@ -119,9 +119,23 @@ class DocumentController {
     const title = isInvoice ? `Rechnung ${doc.documentNumber}` : `Vertrag ${doc.documentNumber}`;
 
     const templateData = PdfExportService.prepareDocumentData(doc);
-    const fallbackTemplateId = TemplateService.getDefaultTemplateId(doc.type);
-    const templateId = (doc.templateId && TemplateService.getById(doc.templateId)) ? doc.templateId : fallbackTemplateId;
-    const renderedTemplate = TemplateService.render(templateId, templateData) || { header: '', body: '', footer: '' };
+    
+    // Sichere Template-ID-Auswahl
+    let templateId = doc.templateId;
+    if (!templateId || (typeof TemplateService === 'undefined' || !TemplateService.getById || !TemplateService.getById(templateId))) {
+      // Fallback auf Standard-ID
+      templateId = doc.type === 'contract' ? 'tmpl_contract_1' : 'tmpl_invoice_1';
+    }
+    
+    // Versuche Template zu rendern
+    let renderedTemplate = { header: '', body: '', footer: '' };
+    if (typeof TemplateService !== 'undefined' && TemplateService.render) {
+      try {
+        renderedTemplate = TemplateService.render(templateId, templateData) || { header: '', body: '', footer: '' };
+      } catch (e) {
+        console.warn('Fehler beim Rendern des Templates:', e);
+      }
+    }
     const templateHeaderHtml = renderedTemplate.header ? `<div class="document-template-section document-template-header">${renderedTemplate.header.replace(/\n/g, '<br>')}</div>` : '<div class="document-template-section document-template-header"><em>Kein Vertragskopf verfügbar</em></div>';
     const templateBodyHtml = renderedTemplate.body ? `<div class="document-template-section document-template-body">${renderedTemplate.body.replace(/\n/g, '<br>')}</div>` : '<div class="document-template-section document-template-body"><em>Kein Vertragstext verfügbar</em></div>';
     const templateFooterHtml = renderedTemplate.footer ? `<div class="document-template-section document-template-footer">${renderedTemplate.footer.replace(/\n/g, '<br>')}</div>` : '<div class="document-template-section document-template-footer"><em>Kein Fußzeilentext verfügbar</em></div>';

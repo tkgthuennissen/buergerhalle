@@ -8,6 +8,24 @@
 
 class DocumentService {
   /**
+   * Hilfsfunktion zum Abrufen der richtigen Template-ID
+   * @param {string} type - 'contract' oder 'invoice'
+   * @return {string}
+   */
+  static getTemplateId(type) {
+    // Zuerst versuchen, die neueste benutzerdefinierte Vorlage zu finden
+    if (typeof TemplateService !== 'undefined' && TemplateService.getDefaultTemplateId) {
+      try {
+        const templateId = TemplateService.getDefaultTemplateId(type);
+        if (templateId) return templateId;
+      } catch (e) {
+        console.warn('Fehler beim Abrufen der Template-ID von TemplateService:', e);
+      }
+    }
+    // Fallback auf Standard-IDs
+    return type === 'contract' ? 'tmpl_contract_1' : 'tmpl_invoice_1';
+  }
+  /**
    * Erstellt einen neuen Vertrag aus einer Buchung
    * @param {string} bookingId
    * @return {Object} Neues Vertrags-Objekt
@@ -35,7 +53,7 @@ class DocumentService {
       total: subtotal,
       paymentMethod: null,
       status: 'created', // "created" | "sent" | "paid" | "cancelled"
-      templateId: TemplateService.getDefaultTemplateId('contract'),
+      templateId: this.getTemplateId('contract'),
       notes: '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -71,7 +89,7 @@ class DocumentService {
       total: subtotal,
       paymentMethod, // "bank_transfer" | "cash"
       status: 'created',
-      templateId: TemplateService.getDefaultTemplateId('invoice'),
+      templateId: this.getTemplateId('invoice'),
       notes: '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()

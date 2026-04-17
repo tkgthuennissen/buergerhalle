@@ -99,8 +99,21 @@ class PdfExportService {
    */
   static generateDocumentHTML(document) {
     // Template laden und rendern
-    const templateId = TemplateService.getDefaultTemplateId(document.type);
-    const rendered = TemplateService.render(document.templateId || templateId, this.prepareDocumentData(document));
+    let rendered = null;
+    
+    if (typeof TemplateService !== 'undefined' && TemplateService.render) {
+      try {
+        const templateId = document.templateId || (TemplateService.getDefaultTemplateId ? TemplateService.getDefaultTemplateId(document.type) : (document.type === 'contract' ? 'tmpl_contract_1' : 'tmpl_invoice_1'));
+        rendered = TemplateService.render(templateId, this.prepareDocumentData(document));
+      } catch (e) {
+        console.warn('Fehler beim Rendern des Templates:', e);
+      }
+    }
+    
+    // Fallback wenn Template nicht rendert
+    if (!rendered) {
+      rendered = { header: '', body: '', footer: '' };
+    }
 
     return `
       <div style="font-family: Arial, sans-serif; max-width: 210mm; min-height: 297mm; margin: 0 auto; padding: 20mm; box-sizing: border-box; background: white; color: #111;">
