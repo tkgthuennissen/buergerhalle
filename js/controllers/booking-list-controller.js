@@ -30,61 +30,128 @@ class BookingListController {
       return;
     }
 
-    // Sortieren nach Anfangsdatum
+    // Gruppiere Buchungen nach Ereignisdatum
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const current = [];
+    const completed = [];
+
+    bookings.forEach(booking => {
+      const eventDate = new Date(booking.eventDate);
+      
+      if (eventDate >= today) {
+        current.push(booking);
+      } else {
+        completed.push(booking);
+      }
+    });
+
+    // Sortiere nach Ereignisdatum
+    const sortByDate = (a, b) => new Date(b.eventDate) - new Date(a.eventDate);
+    current.sort(sortByDate);
+    completed.sort(sortByDate);
+
+    // Render accordion sections
+    list.innerHTML = `
+      <div class="accordion-container">
+        ${this.renderBookingSection('current-bookings', 'Aktuell', current, true)}
+        ${this.renderBookingSection('completed-bookings', 'Abgeschlossen', completed, false)}
+      </div>
+    `;
+
+    // Add event listeners for accordion
+    this.setupAccordion();
+  }
+
+  static renderBookingSection(id, title, bookings, expanded = true) {
+    if (bookings.length === 0) {
+      return '';
+    }
+
+    const expandedClass = expanded ? 'expanded' : '';
+    const displayStyle = expanded ? 'block' : 'none';
+
     const sortedBookings = [...bookings].sort((a, b) => 
       new Date(a.beginDateTime) - new Date(b.beginDateTime)
     );
 
-    list.innerHTML = `
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Veranstalter</th>
-            <th>Veranstaltung</th>
-            <th>Paket</th>
-            <th>Von – Bis</th>
-            <th>Summe</th>
-            <th>Status</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          ${sortedBookings.map(booking => {
-            const address = AddressService.getById(booking.addressId);
-            const pkg = ArticleService.getById(booking.packageId);
-            const total = BookingService.calculateTotal(booking);
-            
-            return `
+    return `
+      <div class="accordion-section">
+        <div class="accordion-header ${expandedClass}" onclick="BookingListController.toggleAccordion(this)">
+          <span class="accordion-toggle">▶</span>
+          <h3>${title} (${bookings.length})</h3>
+        </div>
+        <div class="accordion-content" style="display: ${displayStyle}">
+          <table class="data-table">
+            <thead>
               <tr>
-                <td>${this.escapeHtml(address?.name || '—')}</td>
-                <td>${App.formatDate(booking.eventDate)}</td>
-                <td><small>${this.escapeHtml(pkg?.name || '—')}</small></td>
-                <td>
-                  <small class="text-muted">
-                    ${App.formatDate(booking.beginDateTime, true)}<br>
-                    ${App.formatDate(booking.endDateTime, true)}
-                  </small>
-                </td>
-                <td class="text-right"><strong>${App.formatCurrency(total)}</strong></td>
-                <td>
-                  <span class="badge badge-${booking.status === 'confirmed' ? 'success' : booking.status === 'planned' ? 'warning' : 'danger'}">
-                    ${booking.status === 'confirmed' ? 'Bestätigt' : booking.status === 'planned' ? 'Geplant' : 'Storniert'}
-                  </span>
-                </td>
-                <td>
-                  <div class="table-row-actions">
-                    <button class="icon-btn" onclick="BookingListController.createContract('${booking.id}')" title="Vertrag erstellen">📄</button>
-                    ${booking.status === 'confirmed' ? `<button class="icon-btn" onclick="BookingListController.createInvoice('${booking.id}')" title="Rechnung erstellen">💰</button>` : ''}
-                    <button class="icon-btn" onclick="window.location.href='/buergerhalle/pages/booking-form.html?id=${booking.id}'" title="Bearbeiten">✏️</button>
-                    <button class="icon-btn danger" onclick="BookingListController.deleteBooking('${booking.id}')" title="Löschen">🗑️</button>
-                  </div>
-                </td>
+                <th>Veranstalter</th>
+                <th>Ereignisdatum</th>
+                <th>Paket</th>
+                <th>Von – Bis</th>
+                <th>Summe</th>
+                <th>Status</th>
+                <th></th>
               </tr>
-            `;
-          }).join('')}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              ${sortedBookings.map(booking => {
+                const address = AddressService.getById(booking.addressId);
+                const pkg = ArticleService.getById(booking.packageId);
+                const total = BookingService.calculateTotal(booking);
+                
+                return `
+                  <tr>
+                    <td>${this.escapeHtml(address?.name || '—')}</td>
+                    <td>${App.formatDate(booking.eventDate)}</td>
+                    <td><small>${this.escapeHtml(pkg?.name || '—')}</small></td>
+                    <td>
+                      <small class="text-muted">
+                        ${App.formatDate(booking.beginDateTime, true)}<br>
+                        ${App.formatDate(booking.endDateTime, true)}
+                      </small>
+                    </td>
+                    <td class="text-right"><strong>${App.formatCurrency(total)}</strong></td>
+                    <td>
+                      <span class="badge badge-${booking.status === 'confirmed' ? 'success' : booking.status === 'planned' ? 'warning' : 'danger'}">
+                        ${booking.status === 'confirmed' ? 'Bestätigt' : booking.status === 'planned' ? 'Geplant' : 'Storniert'}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="table-row-actions">
+                        <button class="icon-btn" onclick="BookingListController.createContract('${booking.id}')" title="Vertrag erstellen">📄</button>
+                        ${booking.status === 'confirmed' ? `<button class="icon-btn" onclick="BookingListController.createInvoice('${booking.id}')" title="Rechnung erstellen">💰</button>` : ''}
+                        <button class="icon-btn" onclick="window.location.href='/buergerhalle/pages/booking-form.html?id=${booking.id}'" title="Bearbeiten">✏️</button>
+                        <button class="icon-btn danger" onclick="BookingListController.deleteBooking('${booking.id}')" title="Löschen">🗑️</button>
+                      </div>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
     `;
+  }
+
+  static toggleAccordion(headerElement) {
+    const content = headerElement.nextElementSibling;
+    const isExpanded = headerElement.classList.contains('expanded');
+    
+    if (isExpanded) {
+      headerElement.classList.remove('expanded');
+      content.style.display = 'none';
+    } else {
+      headerElement.classList.add('expanded');
+      content.style.display = 'block';
+    }
+  }
+
+  static setupAccordion() {
+    // Event listeners are set up via onclick attributes
+    // No additional setup needed
   }
 
   static deleteBooking(bookingId) {
