@@ -271,6 +271,7 @@ class DocumentController {
     `;
 
     App.openModal(title, modalContent, [
+      { label: 'PDF exportieren', callback: () => DocumentController.exportPDF(docId) },
       { label: 'Schließen', action: 'close' }
     ]);
   }

@@ -219,6 +219,8 @@ class App {
     const button = modal._buttons[index];
     if (button?.callback) {
       button.callback();
+    } else if (button?.action === 'close') {
+      this.closeModal();
     }
   }
 
