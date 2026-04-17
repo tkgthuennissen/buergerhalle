@@ -11,11 +11,10 @@ class PdfExportService {
    */
   static init() {
     // html2pdf.js sollte als <script src="js/html2pdf.js"></script> eingebunden sein
+    // Prüfe ob html2pdf verfügbar ist oder wird es bei der ersten Benutzung geprüft
+    this.available = true; // Optimistic: assume it will be loaded
     if (typeof html2pdf === 'undefined') {
-      console.warn('html2pdf.js nicht geladen. PDF-Export nicht verfügbar.');
-      this.available = false;
-    } else {
-      this.available = true;
+      console.warn('html2pdf.js wird noch geladen oder ist nicht verfügbar.');
     }
   }
 
@@ -25,8 +24,9 @@ class PdfExportService {
    * @return {Promise} Promise der bei Erfolg die PDF-Datei herunterlädt
    */
   static async exportDocument(documentId) {
-    if (!this.available) {
-      throw new Error('PDF-Export nicht verfügbar');
+    // Prüfe ob html2pdf verfügbar ist
+    if (typeof html2pdf === 'undefined') {
+      throw new Error('PDF-Export nicht verfügbar: html2pdf Bibliothek nicht geladen');
     }
 
     const document = storage.getDocumentById(documentId);
@@ -50,8 +50,13 @@ class PdfExportService {
     const element = this.createTempElement(html);
     try {
       await html2pdf().set(options).from(element).save();
+    } catch (error) {
+      console.error('Fehler beim PDF-Export:', error);
+      throw error;
     } finally {
-      document.body.removeChild(element);
+      if (element && element.parentNode) {
+        element.parentNode.removeChild(element);
+      }
     }
   }
 
@@ -61,8 +66,8 @@ class PdfExportService {
    * @param {string} filename - Dateiname
    */
   static async exportMultipleDocuments(documentIds, filename) {
-    if (!this.available) {
-      throw new Error('PDF-Export nicht verfügbar');
+    if (typeof html2pdf === 'undefined') {
+      throw new Error('PDF-Export nicht verfügbar: html2pdf Bibliothek nicht geladen');
     }
 
     let combinedHTML = '<div style="page-break-after: always;">';
@@ -203,7 +208,15 @@ class PdfExportService {
     element.innerHTML = html;
     element.style.position = 'absolute';
     element.style.left = '-9999px';
-    document.body.appendChild(element);
+    element.style.top = '-9999px';
+    element.style.width = '210mm';
+    element.style.height = 'auto';
+    if (document.body) {
+      document.body.appendChild(element);
+    } else {
+      console.warn('document.body not available, appending to documentElement');
+      document.documentElement.appendChild(element);
+    }
     return element;
   }
 
