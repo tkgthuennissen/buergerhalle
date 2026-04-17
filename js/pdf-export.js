@@ -29,13 +29,24 @@ class PdfExportService {
       throw new Error('PDF-Export nicht verfügbar: html2pdf Bibliothek nicht geladen');
     }
 
+    // Prüfe ob storage verfügbar ist
+    if (typeof storage === 'undefined') {
+      throw new Error('PDF-Export nicht verfügbar: Storage nicht initialisiert');
+    }
+
     const document = storage.getDocumentById(documentId);
     if (!document) {
       throw new Error('Dokument nicht gefunden');
     }
 
     // HTML für PDF generieren
-    const html = this.generateDocumentHTML(document);
+    let html = '';
+    try {
+      html = this.generateDocumentHTML(document);
+    } catch (e) {
+      console.error('Fehler beim Generieren des HTML für PDF:', e);
+      throw new Error('Fehler beim Vorbereiten des Dokuments für PDF-Export: ' + e.message);
+    }
 
     // PDF-Optionen
     const options = {
@@ -52,7 +63,7 @@ class PdfExportService {
       await html2pdf().set(options).from(element).save();
     } catch (error) {
       console.error('Fehler beim PDF-Export:', error);
-      throw error;
+      throw new Error('PDF-Export fehlgeschlagen: ' + (error.message || 'Unbekannter Fehler'));
     } finally {
       if (element && element.parentNode) {
         element.parentNode.removeChild(element);
@@ -103,8 +114,36 @@ class PdfExportService {
    * @return {string} HTML-String
    */
   static generateDocumentHTML(document) {
-    // Prepare template data first
-    const templateData = this.prepareDocumentData(document);
+    // Prepare template data first with error handling
+    let templateData = {};
+    try {
+      templateData = this.prepareDocumentData(document);
+    } catch (e) {
+      console.warn('Fehler beim Vorbereiten der Template-Daten:', e);
+      // Provide fallback templateData
+      templateData = {
+        Dokument: {
+          Nummer: document.documentNumber || '—',
+          Datum: document.documentDate || '—',
+          Total: document.total || 0,
+          Subtotal: document.subtotal || 0,
+          Steuer: document.tax || 0,
+          Positionen: '—'
+        },
+        Adresse: {
+          Name: '—',
+          Strasse: '—',
+          PLZ: '—',
+          Stadt: '—'
+        },
+        Buchung: {
+          Datum: '—'
+        },
+        Artikel: {
+          Name: '—'
+        }
+      };
+    }
     
     // Template laden und rendern
     let rendered = null;
@@ -155,38 +194,64 @@ class PdfExportService {
    * @return {Object} Datenobjekt
    */
   static prepareDocumentData(document) {
-    const address = storage.getAddressById(document.addressId);
-    const booking = storage.getBookingById(document.bookingId);
-    const article = booking ? storage.getArticleById(booking.packageId) : null;
+    // Safely get data from storage
+    let address = null;
+    let booking = null;
+    let article = null;
+    
+    try {
+      if (typeof storage !== 'undefined') {
+        address = storage.getAddressById(document.addressId);
+        booking = storage.getBookingById(document.bookingId);
+        if (booking) {
+          article = storage.getArticleById(booking.packageId);
+        }
+      }
+    } catch (e) {
+      console.warn('Fehler beim Abrufen der Daten aus dem Storage:', e);
+    }
 
     return {
       Dokument: {
-        Nummer: document.documentNumber,
-        Datum: document.documentDate,
-        Total: document.total,
-        Subtotal: document.subtotal,
-        Steuer: document.tax,
-        Positionen: this.formatItems(document.items)
+        Nummer: document.documentNumber || '—',
+        Datum: document.documentDate || '—',
+        Total: document.total || 0,
+        Subtotal: document.subtotal || 0,
+        Steuer: document.tax || 0,
+        Positionen: (document.items && document.items.length > 0) ? this.formatItems(document.items) : '—'
       },
       Adresse: address ? {
-        Name: address.name,
-        Strasse: address.street,
-        PLZ: address.zipCode,
-        Stadt: address.city,
-        Telefon: address.phone,
-        Email: address.email
-      } : {},
+        Name: address.name || '—',
+        Strasse: address.street || '—',
+        PLZ: address.zipCode || '—',
+        Stadt: address.city || '—',
+        Telefon: address.phone || '—',
+        Email: address.email || '—'
+      } : {
+        Name: '—',
+        Strasse: '—',
+        PLZ: '—',
+        Stadt: '—',
+        Telefon: '—',
+        Email: '—'
+      },
       Buchung: booking ? {
         Zeitraum: {
-          beginDateTime: booking.beginDateTime,
-          endDateTime: booking.endDateTime
+          beginDateTime: booking.beginDateTime || '—',
+          endDateTime: booking.endDateTime || '—'
         },
-        Datum: booking.eventDate
-      } : {},
+        Datum: booking.eventDate || '—'
+      } : {
+        Zeitraum: { beginDateTime: '—', endDateTime: '—' },
+        Datum: '—'
+      },
       Artikel: article ? {
-        Name: article.name,
-        Preis: article.unitPrice
-      } : {}
+        Name: article.name || '—',
+        Preis: article.unitPrice || 0
+      } : {
+        Name: '—',
+        Preis: 0
+      }
     };
   }
 
@@ -196,9 +261,18 @@ class PdfExportService {
    * @return {string} Formatierter Text
    */
   static formatItems(items) {
-    return items.map(item =>
-      `${item.description}: ${item.quantity}x ${item.unitPrice.toFixed(2)} € = ${(item.quantity * item.unitPrice).toFixed(2)} €`
-    ).join('\n');
+    if (!items || !Array.isArray(items) || items.length === 0) return '—';
+    try {
+      return items.map(item => {
+        const desc = item.description || '—';
+        const qty = item.quantity || 0;
+        const price = item.unitPrice || 0;
+        return `${desc}: ${qty}x ${price.toFixed(2)} € = ${(qty * price).toFixed(2)} €`;
+      }).join('\n');
+    } catch (e) {
+      console.warn('Fehler beim Formatieren von Items:', e);
+      return '—';
+    }
   }
 
   /**
