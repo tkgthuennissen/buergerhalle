@@ -121,7 +121,7 @@ class BookingListController {
                     <td>
                       <div class="table-row-actions">
                         <button class="icon-btn" onclick="BookingListController.createContract('${booking.id}')" title="Vertrag erstellen">📄</button>
-                        ${booking.status === 'confirmed' ? `<button class="icon-btn" onclick="BookingListController.createInvoice('${booking.id}')" title="Rechnung erstellen">💰</button>` : ''}
+                        <button class="icon-btn" onclick="BookingListController.createInvoice('${booking.id}')" title="Rechnung erstellen">💰</button>
                         <button class="icon-btn" onclick="window.location.href='/buergerhalle/pages/booking-form.html?id=${booking.id}'" title="Bearbeiten">✏️</button>
                         <button class="icon-btn danger" onclick="BookingListController.deleteBooking('${booking.id}')" title="Löschen">🗑️</button>
                       </div>
@@ -174,37 +174,83 @@ class BookingListController {
   static createContract(bookingId) {
     const booking = BookingService.getById(bookingId);
     const address = AddressService.getById(booking.addressId);
+    const total = BookingService.calculateTotal(booking);
 
-    if (!confirm(`Soll ein Vertrag für die Buchung von "${address?.name}" erstellt werden?`)) {
-      return;
-    }
+    // Öffne Dialog zur Bestätigung
+    const title = `Vertrag erstellen für "${address?.name}"`;
+    const content = `
+      <div>
+        <p>Es wird ein Vertrag für folgende Buchung erstellt:</p>
+        <div class="form-group" style="background: var(--light-gray); padding: var(--spacing-md); border-radius: 4px;">
+          <div><strong>Veranstalter:</strong> ${address?.name}</div>
+          <div><strong>Ereignisdatum:</strong> ${App.formatDate(booking.eventDate)}</div>
+          <div><strong>Gesamtsumme:</strong> ${App.formatCurrency(total)}</div>
+        </div>
+      </div>
+    `;
 
-    try {
-      const contract = DocumentService.createContractFromBooking(bookingId);
-      DocumentService.save(contract);
-      App.showNotification('Vertrag erstellt', 'success');
-    } catch (error) {
-      App.showNotification('Fehler: ' + error.message, 'error');
-    }
+    const buttons = [
+      {
+        label: 'Vertrag erstellen',
+        callback: () => {
+          try {
+            const contract = DocumentService.createContractFromBooking(bookingId);
+            DocumentService.save(contract);
+            App.showNotification('Vertrag erstellt', 'success');
+            App.closeModal();
+          } catch (error) {
+            App.showNotification('Fehler: ' + error.message, 'error');
+          }
+        }
+      },
+      {
+        label: 'Abbrechen',
+        action: 'close'
+      }
+    ];
+
+    App.openModal(title, content, buttons);
   }
 
   static createInvoice(bookingId) {
     const booking = BookingService.getById(bookingId);
     const address = AddressService.getById(booking.addressId);
 
-    if (!confirm(`Soll eine Rechnung für die Buchung von "${address?.name}" erstellt werden?`)) {
-      return;
-    }
+    // Öffne Dialog zur Auswahl der Zahlungsmethode
+    const title = `Rechnung erstellen für "${address?.name}"`;
+    const content = `
+      <div class="form-group">
+        <label>Zahlungsmethode</label>
+        <select id="payment-method-select" class="form-control">
+          <option value="bank_transfer">🏦 Banküberweisung</option>
+          <option value="cash">💵 Barzahlung</option>
+        </select>
+        <small class="text-muted">Wählen Sie die Zahlungsmethode für die Rechnung aus.</small>
+      </div>
+    `;
 
-    try {
-      // Erstelle Rechnung mit Standard-Zahlungsmethode "bank_transfer"
-      const invoice = DocumentService.createInvoiceFromBooking(bookingId, 'bank_transfer');
-      DocumentService.save(invoice);
-      App.showNotification('Rechnung erstellt', 'success');
-      // Optional: Zur Dokumenten-Seite weiterleiten oder anzeigen
-    } catch (error) {
-      App.showNotification('Fehler: ' + error.message, 'error');
-    }
+    const buttons = [
+      {
+        label: 'Rechnung erstellen',
+        callback: () => {
+          const paymentMethod = document.getElementById('payment-method-select').value;
+          try {
+            const invoice = DocumentService.createInvoiceFromBooking(bookingId, paymentMethod);
+            DocumentService.save(invoice);
+            App.showNotification('Rechnung erstellt', 'success');
+            App.closeModal();
+          } catch (error) {
+            App.showNotification('Fehler: ' + error.message, 'error');
+          }
+        }
+      },
+      {
+        label: 'Abbrechen',
+        action: 'close'
+      }
+    ];
+
+    App.openModal(title, content, buttons);
   }
 
   static escapeHtml(text) {
